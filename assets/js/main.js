@@ -5,10 +5,10 @@
     return;
   }
 
-  const pageKey = document.body.dataset.page;
-  const pageData = content.pages[pageKey];
+  const pageKey = document.body.dataset.page || "home";
+  const pageData = content.pages[pageKey] || content.pages.home;
 
-  if (!pageData) {
+  if (!pageData || !content.site || !Array.isArray(content.site.nav)) {
     return;
   }
 
@@ -59,6 +59,8 @@
       if (item.href === currentPath || (item.href === "index.html" && currentPath === "")) {
         desktopLink.classList.add("active");
         mobileLink.classList.add("active");
+        desktopLink.setAttribute("aria-current", "page");
+        mobileLink.setAttribute("aria-current", "page");
       }
 
       desktopNav.appendChild(desktopLink);
@@ -138,7 +140,9 @@
     const { section, container } = createSectionShell(cfg.title, cfg.intro);
     const grid = create("div", "card-grid");
 
-    cfg.items.forEach((item) => {
+    const items = Array.isArray(cfg.items) ? cfg.items : [];
+
+    items.forEach((item) => {
       const card = create("article", "program-card reveal");
       card.appendChild(create("h3", "", item.title));
       card.appendChild(create("p", "", item.text));
@@ -160,7 +164,9 @@
     const { section, container } = createSectionShell(cfg.title, cfg.intro);
     const grid = create("div", "impact-grid");
 
-    cfg.items.forEach((item) => {
+    const items = Array.isArray(cfg.items) ? cfg.items : [];
+
+    items.forEach((item) => {
       const card = create("article", "impact-card reveal");
       card.appendChild(create("h3", "", item.value));
       card.appendChild(create("p", "", item.label));
@@ -175,7 +181,9 @@
     const { section, container } = createSectionShell(cfg.title, cfg.intro);
     const list = create("div", "timeline");
 
-    cfg.items.forEach((item) => {
+    const items = Array.isArray(cfg.items) ? cfg.items : [];
+
+    items.forEach((item) => {
       const card = create("article", "event-item reveal");
       card.appendChild(create("p", "event-date", item.date));
       card.appendChild(create("h3", "", item.title));
@@ -193,7 +201,9 @@
     const card = create("article", "aside-card reveal");
     const ul = create("ul", "bullet-list");
 
-    cfg.items.forEach((item) => {
+    const items = Array.isArray(cfg.items) ? cfg.items : [];
+
+    items.forEach((item) => {
       ul.appendChild(create("li", "", item));
     });
 
@@ -206,12 +216,16 @@
     const { section, container } = createSectionShell(cfg.title, cfg.intro);
     const list = create("div", "campaign-list");
 
-    cfg.items.forEach((item) => {
-      const percent = Math.min(100, Math.round((item.raised / item.goal) * 100));
+    const items = Array.isArray(cfg.items) ? cfg.items : [];
+
+    items.forEach((item) => {
+      const safeRaised = Number(item.raised) || 0;
+      const safeGoal = Number(item.goal) || 0;
+      const percent = safeGoal > 0 ? Math.min(100, Math.round((safeRaised / safeGoal) * 100)) : 0;
       const card = create("article", "campaign-card reveal");
       card.appendChild(create("h3", "", item.title));
       card.appendChild(create("p", "", item.text));
-      card.appendChild(create("p", "campaign-meta", `Raised $${item.raised.toLocaleString("en-IN")} of $${item.goal.toLocaleString("en-IN")}`));
+      card.appendChild(create("p", "campaign-meta", `Raised $${safeRaised.toLocaleString("en-IN")} of $${safeGoal.toLocaleString("en-IN")}`));
 
       const track = create("div", "progress-track");
       const fill = create("span", "progress-fill");
@@ -232,20 +246,27 @@
     const card = create("div", "donation-card reveal");
     card.appendChild(create("p", "", cfg.text));
 
-    const presets = create("div", "donation-presets");
+    const presetWrap = create("div", "donation-presets");
     const amountInput = create("input", "");
     amountInput.type = "number";
     amountInput.min = "1";
     amountInput.step = "1";
     amountInput.placeholder = "Enter amount";
 
-    cfg.presets.forEach((amount) => {
+    const presets = Array.isArray(cfg.presets) ? cfg.presets : [];
+
+    const amountLabel = create("label", "", "Donation amount");
+    amountLabel.htmlFor = "donationAmount";
+    amountInput.id = "donationAmount";
+    amountInput.name = "donationAmount";
+
+    presets.forEach((amount) => {
       const button = create("button", "", `$${amount}`);
       button.type = "button";
       button.addEventListener("click", () => {
         amountInput.value = String(amount);
       });
-      presets.appendChild(button);
+      presetWrap.appendChild(button);
     });
 
     const donateButton = create("button", "btn btn-solid", "Donate");
@@ -259,7 +280,8 @@
       showToast(`${content.messages.donationReady}: $${amount}`);
     });
 
-    card.appendChild(presets);
+    card.appendChild(presetWrap);
+    card.appendChild(amountLabel);
     card.appendChild(amountInput);
     card.appendChild(donateButton);
     container.appendChild(card);
@@ -270,7 +292,9 @@
     const { section, container } = createSectionShell(cfg.title, cfg.intro);
     const grid = create("div", "card-grid");
 
-    cfg.items.forEach((item) => {
+    const items = Array.isArray(cfg.items) ? cfg.items : [];
+
+    items.forEach((item) => {
       const card = create("article", "quote-card reveal");
       card.appendChild(create("p", "quote", `"${item.text}"`));
       card.appendChild(create("p", "quote-person", item.name));
@@ -286,7 +310,9 @@
     const { section, container } = createSectionShell(cfg.title, cfg.intro);
     const list = create("div", "faq-list");
 
-    cfg.items.forEach((item, index) => {
+    const items = Array.isArray(cfg.items) ? cfg.items : [];
+
+    items.forEach((item, index) => {
       const details = create("details", "faq-item reveal");
       if (index === 0) {
         details.open = true;
@@ -319,16 +345,27 @@
     formCard.appendChild(create("h3", "", cfg.form.title));
 
     const nameLabel = create("label", "", cfg.form.nameLabel);
+    nameLabel.htmlFor = "contactName";
     const nameInput = create("input");
+    nameInput.id = "contactName";
+    nameInput.name = "name";
+    nameInput.autocomplete = "name";
     nameInput.required = true;
 
     const emailLabel = create("label", "", cfg.form.emailLabel);
+    emailLabel.htmlFor = "contactEmail";
     const emailInput = create("input");
+    emailInput.id = "contactEmail";
+    emailInput.name = "email";
     emailInput.type = "email";
+    emailInput.autocomplete = "email";
     emailInput.required = true;
 
     const messageLabel = create("label", "", cfg.form.messageLabel);
+    messageLabel.htmlFor = "contactMessage";
     const messageInput = create("textarea");
+    messageInput.id = "contactMessage";
+    messageInput.name = "message";
     messageInput.required = true;
     messageInput.rows = 5;
 
@@ -364,8 +401,14 @@
     textWrap.appendChild(create("p", "", cfg.text));
 
     const form = create("form", "newsletter-form");
+    form.setAttribute("aria-label", "Newsletter subscription form");
+    const emailLabel = create("label", "sr-only", "Email for newsletter");
+    emailLabel.htmlFor = "newsletterEmail";
     const email = create("input");
+    email.id = "newsletterEmail";
+    email.name = "newsletterEmail";
     email.type = "email";
+    email.autocomplete = "email";
     email.required = true;
     email.placeholder = "Enter your email";
 
@@ -378,6 +421,7 @@
       showToast(content.messages.newsletterSuccess);
     });
 
+    form.appendChild(emailLabel);
     form.appendChild(email);
     form.appendChild(button);
 
@@ -404,7 +448,9 @@
     const main = document.getElementById("pageMain");
     renderHero(main);
 
-    pageData.sections.forEach((sectionConfig) => {
+    const sections = Array.isArray(pageData.sections) ? pageData.sections : [];
+
+    sections.forEach((sectionConfig) => {
       const renderSection = sectionRenderers[sectionConfig.type];
       if (renderSection) {
         main.appendChild(renderSection(sectionConfig));
@@ -483,7 +529,22 @@
     elements.forEach((el) => observer.observe(el));
   };
 
+  const applyPageMetadata = () => {
+    const baseTitle = content.site.title || "Rotaract Club";
+    if (pageKey === "home") {
+      document.title = baseTitle;
+    } else {
+      document.title = `${pageData.title} | ${baseTitle}`;
+    }
+
+    const metaDescription = document.querySelector('meta[name="description"]');
+    if (metaDescription && pageData.intro) {
+      metaDescription.setAttribute("content", pageData.intro);
+    }
+  };
+
   const init = () => {
+    applyPageMetadata();
     renderHeader();
     renderMain();
     renderFooter();
