@@ -5,61 +5,72 @@
     return;
   }
 
-  const select = (id) => document.getElementById(id);
+  const pageKey = document.body.dataset.page;
+  const pageData = content.pages[pageKey];
 
-  const setText = (id, value) => {
-    const el = select(id);
-    if (el) {
-      el.textContent = value;
-    }
-  };
+  if (!pageData) {
+    return;
+  }
 
-  const createLink = (item, className) => {
-    const a = document.createElement("a");
-    a.href = item.href;
-    a.textContent = item.label;
+  const create = (tag, className, text) => {
+    const el = document.createElement(tag);
     if (className) {
-      a.className = className;
+      el.className = className;
     }
-    return a;
+    if (typeof text === "string") {
+      el.textContent = text;
+    }
+    return el;
   };
-
-  const createButtonLink = (item) => {
-    const a = createLink(item, `btn ${item.type === "outline" ? "btn-outline" : "btn-solid"}`);
-    return a;
-  };
-
-  const formatNumber = (num) => new Intl.NumberFormat("en-IN").format(num);
 
   const showToast = (text) => {
-    const toast = select("toast");
+    const toast = document.getElementById("toast");
     if (!toast) {
       return;
     }
 
     toast.textContent = text;
     toast.classList.add("show");
-
-    window.setTimeout(() => {
-      toast.classList.remove("show");
-    }, 2800);
+    window.setTimeout(() => toast.classList.remove("show"), 2600);
   };
 
-  const renderNavigation = () => {
-    setText("brandName", content.site.title);
+  const currentPath = window.location.pathname.split("/").pop() || "index.html";
 
-    const desktopNav = select("desktopNav");
-    const mobileNav = select("mobileNav");
+  const renderHeader = () => {
+    const header = document.getElementById("siteHeader");
+    const wrap = create("div", "container nav-wrap");
+    const brand = create("a", "brand", content.site.title);
+    brand.href = "index.html";
+
+    const desktopNav = create("nav", "desktop-nav");
+    desktopNav.setAttribute("aria-label", "Primary");
+
+    const mobileNav = create("nav", "mobile-nav");
+    mobileNav.setAttribute("aria-label", "Mobile navigation");
+    mobileNav.id = "mobileNav";
 
     content.site.nav.forEach((item) => {
-      desktopNav.appendChild(createLink(item));
-      mobileNav.appendChild(createLink(item));
+      const desktopLink = create("a", "", item.label);
+      desktopLink.href = item.href;
+
+      const mobileLink = create("a", "", item.label);
+      mobileLink.href = item.href;
+
+      if (item.href === currentPath || (item.href === "index.html" && currentPath === "")) {
+        desktopLink.classList.add("active");
+        mobileLink.classList.add("active");
+      }
+
+      desktopNav.appendChild(desktopLink);
+      mobileNav.appendChild(mobileLink);
     });
 
-    const ctaLink = createLink({ label: "Donate", href: "#testimonialsSection" }, "btn btn-solid");
-    desktopNav.appendChild(ctaLink);
-
-    const menuToggle = select("menuToggle");
+    const menuToggle = create("button", "menu-toggle");
+    menuToggle.id = "menuToggle";
+    menuToggle.setAttribute("aria-label", "Open menu");
+    menuToggle.setAttribute("aria-expanded", "false");
+    menuToggle.appendChild(create("span"));
+    menuToggle.appendChild(create("span"));
 
     menuToggle.addEventListener("click", () => {
       const isOpen = menuToggle.getAttribute("aria-expanded") === "true";
@@ -73,460 +84,376 @@
         mobileNav.classList.remove("open");
       }
     });
+
+    wrap.appendChild(brand);
+    wrap.appendChild(desktopNav);
+    wrap.appendChild(menuToggle);
+
+    header.appendChild(wrap);
+    header.appendChild(mobileNav);
   };
 
-  const renderHero = () => {
-    setText("heroKicker", content.hero.kicker);
-    setText("heroTitle", content.hero.title);
-    setText("heroSubtitle", content.hero.subtitle);
+  const renderHero = (main) => {
+    const section = create("section", "hero section");
+    const container = create("div", "container");
+    const copy = create("div", "hero-copy");
 
-    const heroActions = select("heroActions");
-    content.hero.actions.forEach((action) => {
-      heroActions.appendChild(createButtonLink(action));
-    });
+    copy.appendChild(create("p", "kicker", pageData.kicker));
+    copy.appendChild(create("h1", "", pageData.title));
+    copy.appendChild(create("p", "lead", pageData.intro));
 
-    const heroFacts = select("heroFacts");
-    content.hero.facts.forEach((fact) => {
-      const pill = document.createElement("span");
-      pill.className = "fact-pill";
-      pill.textContent = fact;
-      heroFacts.appendChild(pill);
-    });
-
-    const panel = select("heroPanel");
-    const title = document.createElement("h3");
-    title.textContent = content.hero.panel.title;
-    panel.appendChild(title);
-
-    const list = document.createElement("ul");
-    content.hero.panel.items.forEach((item) => {
-      const li = document.createElement("li");
-      li.textContent = item;
-      list.appendChild(li);
-    });
-    panel.appendChild(list);
-
-    const note = document.createElement("p");
-    note.className = "panel-note";
-    note.textContent = content.hero.panel.note;
-    panel.appendChild(note);
-  };
-
-  const renderImpact = () => {
-    setText("impactKicker", content.impact.kicker);
-    setText("impactTitle", content.impact.title);
-
-    const grid = select("impactGrid");
-
-    content.impact.stats.forEach((stat) => {
-      const card = document.createElement("article");
-      card.className = "impact-card reveal";
-
-      const value = document.createElement("h3");
-      value.dataset.target = String(stat.value);
-      value.dataset.suffix = stat.suffix;
-      value.textContent = `0${stat.suffix}`;
-
-      const label = document.createElement("p");
-      label.textContent = stat.label;
-
-      card.appendChild(value);
-      card.appendChild(label);
-      grid.appendChild(card);
-    });
-  };
-
-  const renderPrograms = () => {
-    setText("programsKicker", content.programs.kicker);
-    setText("programsTitle", content.programs.title);
-    setText("programsIntro", content.programs.intro);
-
-    const grid = select("programsGrid");
-
-    content.programs.cards.forEach((cardData) => {
-      const card = document.createElement("article");
-      card.className = "program-card reveal";
-
-      const title = document.createElement("h3");
-      title.textContent = cardData.title;
-
-      const desc = document.createElement("p");
-      desc.textContent = cardData.description;
-
-      const tags = document.createElement("div");
-      tags.className = "tags";
-
-      cardData.tags.forEach((tag) => {
-        const badge = document.createElement("span");
-        badge.textContent = tag;
-        tags.appendChild(badge);
+    if (Array.isArray(pageData.actions) && pageData.actions.length > 0) {
+      const actions = create("div", "hero-actions");
+      pageData.actions.forEach((action) => {
+        const link = create("a", `btn ${action.style === "outline" ? "btn-outline" : "btn-solid"}`, action.label);
+        link.href = action.href;
+        actions.appendChild(link);
       });
+      copy.appendChild(actions);
+    }
 
-      card.appendChild(title);
-      card.appendChild(desc);
-      card.appendChild(tags);
+    container.appendChild(copy);
+    section.appendChild(container);
+    main.appendChild(section);
+  };
+
+  const createSectionShell = (title, intro) => {
+    const section = create("section", "section");
+    const container = create("div", "container");
+    const head = create("div", "section-head");
+
+    if (title) {
+      head.appendChild(create("h2", "", title));
+    }
+    if (intro) {
+      head.appendChild(create("p", "", intro));
+    }
+
+    container.appendChild(head);
+    section.appendChild(container);
+    return { section, container };
+  };
+
+  const renderCards = (cfg) => {
+    const { section, container } = createSectionShell(cfg.title, cfg.intro);
+    const grid = create("div", "card-grid");
+
+    cfg.items.forEach((item) => {
+      const card = create("article", "program-card reveal");
+      card.appendChild(create("h3", "", item.title));
+      card.appendChild(create("p", "", item.text));
+
+      if (Array.isArray(item.tags) && item.tags.length > 0) {
+        const tags = create("div", "tags");
+        item.tags.forEach((tag) => tags.appendChild(create("span", "", tag)));
+        card.appendChild(tags);
+      }
+
       grid.appendChild(card);
     });
+
+    container.appendChild(grid);
+    return section;
   };
 
-  const renderEvents = () => {
-    setText("eventsKicker", content.events.kicker);
-    setText("eventsTitle", content.events.title);
+  const renderMetrics = (cfg) => {
+    const { section, container } = createSectionShell(cfg.title, cfg.intro);
+    const grid = create("div", "impact-grid");
 
-    const timeline = select("eventsTimeline");
-
-    content.events.timeline.forEach((eventData) => {
-      const event = document.createElement("article");
-      event.className = "event-item reveal";
-
-      const date = document.createElement("p");
-      date.className = "event-date";
-      date.textContent = eventData.date;
-
-      const title = document.createElement("h3");
-      title.textContent = eventData.title;
-
-      const location = document.createElement("p");
-      location.className = "event-location";
-      location.textContent = eventData.location;
-
-      const desc = document.createElement("p");
-      desc.textContent = eventData.description;
-
-      event.appendChild(date);
-      event.appendChild(title);
-      event.appendChild(location);
-      event.appendChild(desc);
-      timeline.appendChild(event);
+    cfg.items.forEach((item) => {
+      const card = create("article", "impact-card reveal");
+      card.appendChild(create("h3", "", item.value));
+      card.appendChild(create("p", "", item.label));
+      grid.appendChild(card);
     });
 
-    const volunteerCard = select("volunteerCard");
-    const info = content.events.volunteerCard;
-
-    const title = document.createElement("h3");
-    title.textContent = info.title;
-
-    const text = document.createElement("p");
-    text.textContent = info.text;
-
-    const ul = document.createElement("ul");
-    info.points.forEach((point) => {
-      const li = document.createElement("li");
-      li.textContent = point;
-      ul.appendChild(li);
-    });
-
-    const cta = createLink(info.cta, "btn btn-outline");
-
-    volunteerCard.appendChild(title);
-    volunteerCard.appendChild(text);
-    volunteerCard.appendChild(ul);
-    volunteerCard.appendChild(cta);
+    container.appendChild(grid);
+    return section;
   };
 
-  const renderCampaigns = () => {
-    setText("campaignsKicker", content.campaigns.kicker);
-    setText("campaignsTitle", content.campaigns.title);
+  const renderTimeline = (cfg) => {
+    const { section, container } = createSectionShell(cfg.title, cfg.intro);
+    const list = create("div", "timeline");
 
-    const list = select("campaignList");
-
-    content.campaigns.list.forEach((campaign) => {
-      const progress = Math.min(100, Math.round((campaign.raised / campaign.goal) * 100));
-
-      const card = document.createElement("article");
-      card.className = "campaign-card reveal";
-
-      const title = document.createElement("h3");
-      title.textContent = campaign.title;
-
-      const desc = document.createElement("p");
-      desc.textContent = campaign.description;
-
-      const meta = document.createElement("p");
-      meta.className = "campaign-meta";
-      meta.textContent = `Raised $${formatNumber(campaign.raised)} of $${formatNumber(campaign.goal)}`;
-
-      const track = document.createElement("div");
-      track.className = "progress-track";
-      const fill = document.createElement("span");
-      fill.className = "progress-fill";
-      fill.style.width = `${progress}%`;
-      track.appendChild(fill);
-
-      const percent = document.createElement("p");
-      percent.className = "campaign-percent";
-      percent.textContent = `${progress}% funded`;
-
-      card.appendChild(title);
-      card.appendChild(desc);
-      card.appendChild(meta);
-      card.appendChild(track);
-      card.appendChild(percent);
+    cfg.items.forEach((item) => {
+      const card = create("article", "event-item reveal");
+      card.appendChild(create("p", "event-date", item.date));
+      card.appendChild(create("h3", "", item.title));
+      card.appendChild(create("p", "event-location", item.meta));
+      card.appendChild(create("p", "", item.text));
       list.appendChild(card);
     });
+
+    container.appendChild(list);
+    return section;
   };
 
-  const renderTestimonials = () => {
-    setText("testimonialsKicker", content.testimonials.kicker);
-    setText("testimonialsTitle", content.testimonials.title);
+  const renderList = (cfg) => {
+    const { section, container } = createSectionShell(cfg.title, cfg.intro);
+    const card = create("article", "aside-card reveal");
+    const ul = create("ul", "bullet-list");
 
-    const quoteCard = select("quoteCard");
-    let index = 0;
-
-    const paint = () => {
-      const quote = content.testimonials.quotes[index];
-      quoteCard.innerHTML = "";
-
-      const text = document.createElement("p");
-      text.className = "quote";
-      text.textContent = `\"${quote.text}\"`;
-
-      const person = document.createElement("p");
-      person.className = "quote-person";
-      person.textContent = quote.name;
-
-      const role = document.createElement("p");
-      role.className = "quote-role";
-      role.textContent = quote.role;
-
-      quoteCard.appendChild(text);
-      quoteCard.appendChild(person);
-      quoteCard.appendChild(role);
-    };
-
-    select("prevTestimonial").addEventListener("click", () => {
-      index = (index - 1 + content.testimonials.quotes.length) % content.testimonials.quotes.length;
-      paint();
+    cfg.items.forEach((item) => {
+      ul.appendChild(create("li", "", item));
     });
 
-    select("nextTestimonial").addEventListener("click", () => {
-      index = (index + 1) % content.testimonials.quotes.length;
-      paint();
-    });
-
-    window.setInterval(() => {
-      index = (index + 1) % content.testimonials.quotes.length;
-      paint();
-    }, 6500);
-
-    paint();
+    card.appendChild(ul);
+    container.appendChild(card);
+    return section;
   };
 
-  const renderDonate = () => {
-    setText("donateKicker", content.donate.kicker);
-    setText("donateTitle", content.donate.title);
-    setText("donateText", content.donate.text);
-    setText("donateButton", content.donate.buttonLabel);
-    setText("donationNote", content.donate.note);
+  const renderProgress = (cfg) => {
+    const { section, container } = createSectionShell(cfg.title, cfg.intro);
+    const list = create("div", "campaign-list");
 
-    const presets = select("donationPresets");
-    const amountInput = select("donationAmount");
+    cfg.items.forEach((item) => {
+      const percent = Math.min(100, Math.round((item.raised / item.goal) * 100));
+      const card = create("article", "campaign-card reveal");
+      card.appendChild(create("h3", "", item.title));
+      card.appendChild(create("p", "", item.text));
+      card.appendChild(create("p", "campaign-meta", `Raised $${item.raised.toLocaleString("en-IN")} of $${item.goal.toLocaleString("en-IN")}`));
 
-    content.donate.presets.forEach((amount) => {
-      const button = document.createElement("button");
+      const track = create("div", "progress-track");
+      const fill = create("span", "progress-fill");
+      fill.style.width = `${percent}%`;
+      track.appendChild(fill);
+
+      card.appendChild(track);
+      card.appendChild(create("p", "campaign-percent", `${percent}% funded`));
+      list.appendChild(card);
+    });
+
+    container.appendChild(list);
+    return section;
+  };
+
+  const renderDonate = (cfg) => {
+    const { section, container } = createSectionShell(cfg.title, cfg.intro);
+    const card = create("div", "donation-card reveal");
+    card.appendChild(create("p", "", cfg.text));
+
+    const presets = create("div", "donation-presets");
+    const amountInput = create("input", "");
+    amountInput.type = "number";
+    amountInput.min = "1";
+    amountInput.step = "1";
+    amountInput.placeholder = "Enter amount";
+
+    cfg.presets.forEach((amount) => {
+      const button = create("button", "", `$${amount}`);
       button.type = "button";
-      button.textContent = `$${amount}`;
       button.addEventListener("click", () => {
         amountInput.value = String(amount);
       });
       presets.appendChild(button);
     });
 
-    select("donateButton").addEventListener("click", () => {
+    const donateButton = create("button", "btn btn-solid", "Donate");
+    donateButton.type = "button";
+    donateButton.addEventListener("click", () => {
       const amount = Number(amountInput.value);
       if (!amount || amount <= 0) {
         showToast(content.messages.amountRequired);
         return;
       }
-      showToast(`${content.messages.donationReady} Amount: $${amount}`);
+      showToast(`${content.messages.donationReady}: $${amount}`);
     });
+
+    card.appendChild(presets);
+    card.appendChild(amountInput);
+    card.appendChild(donateButton);
+    container.appendChild(card);
+    return section;
   };
 
-  const renderGallery = () => {
-    setText("galleryKicker", content.gallery.kicker);
-    setText("galleryTitle", content.gallery.title);
+  const renderQuotes = (cfg) => {
+    const { section, container } = createSectionShell(cfg.title, cfg.intro);
+    const grid = create("div", "card-grid");
 
-    const grid = select("galleryGrid");
-
-    content.gallery.images.forEach((imgData) => {
-      const item = document.createElement("figure");
-      item.className = "gallery-item reveal";
-
-      const img = document.createElement("img");
-      img.src = imgData.src;
-      img.alt = imgData.alt;
-      img.loading = "lazy";
-
-      item.appendChild(img);
-      grid.appendChild(item);
+    cfg.items.forEach((item) => {
+      const card = create("article", "quote-card reveal");
+      card.appendChild(create("p", "quote", `"${item.text}"`));
+      card.appendChild(create("p", "quote-person", item.name));
+      card.appendChild(create("p", "quote-role", item.role));
+      grid.appendChild(card);
     });
+
+    container.appendChild(grid);
+    return section;
   };
 
-  const renderBlogAndFaq = () => {
-    setText("blogKicker", content.blog.kicker);
-    setText("blogTitle", content.blog.title);
+  const renderFaq = (cfg) => {
+    const { section, container } = createSectionShell(cfg.title, cfg.intro);
+    const list = create("div", "faq-list");
 
-    const blogGrid = select("blogGrid");
-    content.blog.posts.forEach((post) => {
-      const card = document.createElement("article");
-      card.className = "blog-card reveal";
-
-      const title = document.createElement("h3");
-      title.textContent = post.title;
-
-      const excerpt = document.createElement("p");
-      excerpt.textContent = post.excerpt;
-
-      const link = createLink({ label: "Read story", href: post.link }, "text-link");
-
-      card.appendChild(title);
-      card.appendChild(excerpt);
-      card.appendChild(link);
-      blogGrid.appendChild(card);
-    });
-
-    setText("faqKicker", content.faq.kicker);
-    setText("faqTitle", content.faq.title);
-
-    const faqList = select("faqList");
-    content.faq.items.forEach((faq, idx) => {
-      const details = document.createElement("details");
-      details.className = "faq-item reveal";
-      if (idx === 0) {
+    cfg.items.forEach((item, index) => {
+      const details = create("details", "faq-item reveal");
+      if (index === 0) {
         details.open = true;
       }
 
-      const summary = document.createElement("summary");
-      summary.textContent = faq.question;
-
-      const answer = document.createElement("p");
-      answer.textContent = faq.answer;
+      const summary = create("summary", "", item.question);
+      const answer = create("p", "", item.answer);
 
       details.appendChild(summary);
       details.appendChild(answer);
-      faqList.appendChild(details);
+      list.appendChild(details);
     });
+
+    container.appendChild(list);
+    return section;
   };
 
-  const renderContact = () => {
-    setText("contactKicker", content.contact.kicker);
-    setText("contactTitle", content.contact.title);
-    setText("contactIntro", content.contact.intro);
+  const renderContact = (cfg) => {
+    const section = create("section", "section contact");
+    const container = create("div", "container two-col contact-wrap");
 
-    const details = select("contactDetails");
+    const detailsCard = create("article", "aside-card reveal");
+    detailsCard.appendChild(create("h3", "", cfg.title));
 
-    content.contact.details.forEach((item) => {
-      const row = document.createElement("p");
-      row.innerHTML = `<strong>${item.label}:</strong> ${item.value}`;
-      details.appendChild(row);
+    cfg.details.forEach((row) => {
+      detailsCard.appendChild(create("p", "", `${row.label}: ${row.value}`));
     });
 
-    setText("nameLabel", content.contact.form.nameLabel);
-    setText("emailLabel", content.contact.form.emailLabel);
-    setText("messageLabel", content.contact.form.messageLabel);
-    setText("contactSubmit", content.contact.form.submitLabel);
-    setText("contactNote", content.contact.form.note);
+    const formCard = create("form", "contact-form reveal");
+    formCard.appendChild(create("h3", "", cfg.form.title));
 
-    const form = select("contactForm");
-    form.addEventListener("submit", (event) => {
+    const nameLabel = create("label", "", cfg.form.nameLabel);
+    const nameInput = create("input");
+    nameInput.required = true;
+
+    const emailLabel = create("label", "", cfg.form.emailLabel);
+    const emailInput = create("input");
+    emailInput.type = "email";
+    emailInput.required = true;
+
+    const messageLabel = create("label", "", cfg.form.messageLabel);
+    const messageInput = create("textarea");
+    messageInput.required = true;
+    messageInput.rows = 5;
+
+    const submit = create("button", "btn btn-solid", cfg.form.submitLabel);
+    submit.type = "submit";
+
+    formCard.addEventListener("submit", (event) => {
       event.preventDefault();
-      form.reset();
+      formCard.reset();
       showToast(content.messages.contactSuccess);
     });
+
+    formCard.appendChild(nameLabel);
+    formCard.appendChild(nameInput);
+    formCard.appendChild(emailLabel);
+    formCard.appendChild(emailInput);
+    formCard.appendChild(messageLabel);
+    formCard.appendChild(messageInput);
+    formCard.appendChild(submit);
+
+    container.appendChild(detailsCard);
+    container.appendChild(formCard);
+    section.appendChild(container);
+    return section;
   };
 
-  const renderNewsletter = () => {
-    setText("newsletterKicker", content.newsletter.kicker);
-    setText("newsletterTitle", content.newsletter.title);
-    setText("newsletterText", content.newsletter.text);
-    setText("newsletterLabel", content.newsletter.label);
-    setText("newsletterSubmit", content.newsletter.submitLabel);
+  const renderNewsletter = (cfg) => {
+    const section = create("section", "section");
+    const container = create("div", "container newsletter-card reveal");
 
-    const form = select("newsletterForm");
+    const textWrap = create("div");
+    textWrap.appendChild(create("h3", "", cfg.title));
+    textWrap.appendChild(create("p", "", cfg.text));
+
+    const form = create("form", "newsletter-form");
+    const email = create("input");
+    email.type = "email";
+    email.required = true;
+    email.placeholder = "Enter your email";
+
+    const button = create("button", "btn btn-ghost", cfg.submitLabel);
+    button.type = "submit";
+
     form.addEventListener("submit", (event) => {
       event.preventDefault();
       form.reset();
       showToast(content.messages.newsletterSuccess);
     });
+
+    form.appendChild(email);
+    form.appendChild(button);
+
+    container.appendChild(textWrap);
+    container.appendChild(form);
+    section.appendChild(container);
+    return section;
+  };
+
+  const sectionRenderers = {
+    cards: renderCards,
+    metrics: renderMetrics,
+    timeline: renderTimeline,
+    list: renderList,
+    progress: renderProgress,
+    donate: renderDonate,
+    quotes: renderQuotes,
+    faq: renderFaq,
+    contact: renderContact,
+    newsletter: renderNewsletter
+  };
+
+  const renderMain = () => {
+    const main = document.getElementById("pageMain");
+    renderHero(main);
+
+    pageData.sections.forEach((sectionConfig) => {
+      const renderSection = sectionRenderers[sectionConfig.type];
+      if (renderSection) {
+        main.appendChild(renderSection(sectionConfig));
+      }
+    });
   };
 
   const renderFooter = () => {
-    const footer = select("footerGrid");
+    const footer = document.getElementById("siteFooter");
+    const container = create("div", "container footer-grid");
 
-    const colOne = document.createElement("div");
-    const brand = document.createElement("h3");
-    brand.textContent = content.site.title;
-    const about = document.createElement("p");
-    about.textContent = content.footer.about;
-    colOne.appendChild(brand);
-    colOne.appendChild(about);
+    const aboutCol = create("div");
+    aboutCol.appendChild(create("h3", "", content.site.title));
+    aboutCol.appendChild(create("p", "", content.site.footerAbout));
 
-    const colTwo = document.createElement("div");
-    const quickTitle = document.createElement("h4");
-    quickTitle.textContent = content.footer.quickTitle;
-    colTwo.appendChild(quickTitle);
-    content.site.footerLinks.forEach((item) => colTwo.appendChild(createLink(item)));
+    const linksCol = create("div");
+    linksCol.appendChild(create("h4", "", "Quick Links"));
+    content.site.footerLinks.forEach((item) => {
+      const link = create("a", "", item.label);
+      link.href = item.href;
+      linksCol.appendChild(link);
+    });
 
-    const colThree = document.createElement("div");
-    const legalTitle = document.createElement("h4");
-    legalTitle.textContent = content.footer.legalTitle;
-    colThree.appendChild(legalTitle);
-    content.footer.legalLinks.forEach((item) => colThree.appendChild(createLink(item)));
+    const legalCol = create("div");
+    legalCol.appendChild(create("h4", "", "Legal"));
+    content.site.legalLinks.forEach((item) => {
+      const link = create("a", "", item.label);
+      link.href = item.href;
+      legalCol.appendChild(link);
+    });
 
-    footer.appendChild(colOne);
-    footer.appendChild(colTwo);
-    footer.appendChild(colThree);
+    container.appendChild(aboutCol);
+    container.appendChild(linksCol);
+    container.appendChild(legalCol);
 
-    const year = new Date().getFullYear();
-    setText("copyright", `${year} ${content.site.title}. ${content.footer.copyright}`);
-  };
+    const copy = create("p", "copyright", `${new Date().getFullYear()} ${content.site.title}. All rights reserved.`);
 
-  const setupCountersAndReveal = () => {
-    const revealElements = document.querySelectorAll(".reveal");
-
-    const observer = new IntersectionObserver(
-      (entries, obs) => {
-        entries.forEach((entry) => {
-          if (!entry.isIntersecting) {
-            return;
-          }
-
-          entry.target.classList.add("visible");
-
-          if (entry.target.matches(".impact-card")) {
-            const valueEl = entry.target.querySelector("h3");
-            const target = Number(valueEl.dataset.target || 0);
-            const suffix = valueEl.dataset.suffix || "";
-            const duration = 1200;
-            const start = performance.now();
-
-            const tick = (now) => {
-              const elapsed = now - start;
-              const progress = Math.min(1, elapsed / duration);
-              const current = Math.floor(target * progress);
-              valueEl.textContent = `${formatNumber(current)}${suffix}`;
-              if (progress < 1) {
-                requestAnimationFrame(tick);
-              }
-            };
-
-            requestAnimationFrame(tick);
-          }
-
-          obs.unobserve(entry.target);
-        });
-      },
-      { threshold: 0.2 }
-    );
-
-    revealElements.forEach((el) => observer.observe(el));
+    footer.appendChild(container);
+    footer.appendChild(copy);
   };
 
   const setupBackToTop = () => {
-    const button = select("backToTop");
+    const button = document.getElementById("backToTop");
+    if (!button) {
+      return;
+    }
 
     const onScroll = () => {
-      button.classList.toggle("visible", window.scrollY > 500);
+      button.classList.toggle("visible", window.scrollY > 480);
     };
 
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -537,22 +464,31 @@
     });
   };
 
+  const setupReveal = () => {
+    const elements = document.querySelectorAll(".reveal");
+
+    const observer = new IntersectionObserver(
+      (entries, obs) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) {
+            return;
+          }
+          entry.target.classList.add("visible");
+          obs.unobserve(entry.target);
+        });
+      },
+      { threshold: 0.15 }
+    );
+
+    elements.forEach((el) => observer.observe(el));
+  };
+
   const init = () => {
-    renderNavigation();
-    renderHero();
-    renderImpact();
-    renderPrograms();
-    renderEvents();
-    renderCampaigns();
-    renderTestimonials();
-    renderDonate();
-    renderGallery();
-    renderBlogAndFaq();
-    renderContact();
-    renderNewsletter();
+    renderHeader();
+    renderMain();
     renderFooter();
-    setupCountersAndReveal();
     setupBackToTop();
+    setupReveal();
   };
 
   init();

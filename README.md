@@ -1,12 +1,13 @@
 # Rotaract Club Website Template
 
-Modern NGO-style website for a Rotaract Club, built so content updates happen in one file only.
+Modern NGO-style website for a Rotaract Club with separate menu pages, all built from shared JavaScript content.
 
 ## What You Get
 
-- Modern landing experience with impact counters, programs, campaigns, events, testimonials, gallery, FAQ, and contact/newsletter forms
+- Separate page file for each menu item (Home, Impact, Programs, Events, Campaigns, Stories, Contact)
+- JavaScript-rendered page sections powered by a shared content schema
 - Responsive design for desktop, tablet, and mobile
-- Centralized content architecture: edit one JS file to update all visible text/data on the site
+- Centralized content architecture: edit one JS file to update any specific menu page
 - Ready to connect forms and donation button to real services
 
 ## Project Structure
@@ -14,6 +15,12 @@ Modern NGO-style website for a Rotaract Club, built so content updates happen in
 ```text
 .
 ├── index.html
+├── impact.html
+├── programs.html
+├── events.html
+├── campaigns.html
+├── stories.html
+├── contact.html
 ├── assets
 │   ├── css
 │   │   └── styles.css
@@ -29,19 +36,21 @@ Edit only this file:
 
 - `assets/js/site-content.js`
 
-All page sections pull data from that file, including:
+All menu pages are linked to this common file. Update the specific page content inside:
+
+- `pages.home`
+- `pages.impact`
+- `pages.programs`
+- `pages.events`
+- `pages.campaigns`
+- `pages.stories`
+- `pages.contact`
+
+Also available in the same file:
 
 - Site name and navigation
-- Hero section
-- Impact numbers
-- Programs
-- Events
-- Campaign goals and raised amounts
-- Testimonials
-- Gallery images
-- Blog cards and FAQ
-- Contact details and form labels
-- Newsletter copy
+- Hero copy and actions per page
+- Section blocks (`cards`, `metrics`, `timeline`, `progress`, `donate`, `quotes`, `faq`, `contact`, `newsletter`, `list`)
 - Footer links and legal copy
 - Success/error toast messages
 
@@ -86,15 +95,15 @@ For this repository, expected URL is:
 
 ## Connect Real Integrations (Optional)
 
-- Contact form: connect `#contactForm` submit handler in `assets/js/main.js` to your backend API or form service
-- Newsletter form: connect `#newsletterForm` submit handler to your mailing list platform
-- Donation button: connect `#donateButton` action to Stripe, Razorpay, or another payment provider
+- Contact form: connect the `renderContact` form submit handler in `assets/js/main.js` to your backend API or form service
+- Newsletter form: connect the `renderNewsletter` submit handler in `assets/js/main.js` to your mailing list platform
+- Donation button: connect the `renderDonate` action in `assets/js/main.js` to Stripe, Razorpay, or another payment provider
 
 ## Customization Tips
 
 - Brand colors: update CSS variables in `assets/css/styles.css`
-- Typography: replace Google Fonts in `index.html` and update font-family rules in `styles.css`
-- New sections: add data in `site-content.js` and render logic in `main.js`
+- Typography: replace Google Fonts in page files and update font-family rules in `styles.css`
+- New section types: add renderer logic in `assets/js/main.js` and data in `assets/js/site-content.js`
 
 ## License
 
