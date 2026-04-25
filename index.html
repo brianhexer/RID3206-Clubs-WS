@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rotaract Club</title>
+  <meta
+    name="description"
+    content="Rotaract Club community platform for service projects, events, volunteering, and impact tracking."
+  />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Manrope:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="assets/css/styles.css" />
+</head>
+<body>
+  <div class="site-bg" aria-hidden="true"></div>
+
+  <header class="site-header" id="top">
+    <div class="container nav-wrap">
+      <a class="brand" href="#top" id="brandName"></a>
+      <nav class="desktop-nav" aria-label="Primary" id="desktopNav"></nav>
+      <button id="menuToggle" class="menu-toggle" aria-label="Open menu" aria-expanded="false">
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <nav class="mobile-nav" id="mobileNav" aria-label="Mobile navigation"></nav>
+  </header>
+
+  <main>
+    <section class="hero section" id="hero">
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <p class="kicker" id="heroKicker"></p>
+          <h1 id="heroTitle"></h1>
+          <p class="lead" id="heroSubtitle"></p>
+          <div class="hero-actions" id="heroActions"></div>
+          <div class="quick-facts" id="heroFacts"></div>
+        </div>
+        <div class="hero-panel reveal" id="heroPanel"></div>
+      </div>
+    </section>
+
+    <section class="section" id="impactSection">
+      <div class="container">
+        <div class="section-head">
+          <p class="kicker" id="impactKicker"></p>
+          <h2 id="impactTitle"></h2>
+        </div>
+        <div class="impact-grid" id="impactGrid"></div>
+      </div>
+    </section>
+
+    <section class="section programs" id="programsSection">
+      <div class="container">
+        <div class="section-head">
+          <p class="kicker" id="programsKicker"></p>
+          <h2 id="programsTitle"></h2>
+          <p id="programsIntro"></p>
+        </div>
+        <div class="card-grid" id="programsGrid"></div>
+      </div>
+    </section>
+
+    <section class="section events" id="eventsSection">
+      <div class="container two-col">
+        <div>
+          <div class="section-head left">
+            <p class="kicker" id="eventsKicker"></p>
+            <h2 id="eventsTitle"></h2>
+          </div>
+          <div class="timeline" id="eventsTimeline"></div>
+        </div>
+        <aside class="aside-card reveal" id="volunteerCard"></aside>
+      </div>
+    </section>
+
+    <section class="section campaigns" id="campaignsSection">
+      <div class="container">
+        <div class="section-head">
+          <p class="kicker" id="campaignsKicker"></p>
+          <h2 id="campaignsTitle"></h2>
+        </div>
+        <div class="campaign-list" id="campaignList"></div>
+      </div>
+    </section>
+
+    <section class="section testimonials" id="testimonialsSection">
+      <div class="container two-col testimonials-wrap">
+        <div>
+          <div class="section-head left">
+            <p class="kicker" id="testimonialsKicker"></p>
+            <h2 id="testimonialsTitle"></h2>
+          </div>
+          <article class="quote-card reveal" id="quoteCard"></article>
+          <div class="carousel-controls">
+            <button id="prevTestimonial" aria-label="Previous testimonial">Previous</button>
+            <button id="nextTestimonial" aria-label="Next testimonial">Next</button>
+          </div>
+        </div>
+        <div>
+          <div class="section-head left">
+            <p class="kicker" id="donateKicker"></p>
+            <h2 id="donateTitle"></h2>
+          </div>
+          <div class="donation-card reveal">
+            <p id="donateText"></p>
+            <div class="donation-presets" id="donationPresets"></div>
+            <label for="donationAmount">Custom amount</label>
+            <input id="donationAmount" type="number" min="1" step="1" />
+            <button id="donateButton" class="btn btn-solid" type="button"></button>
+            <p class="donation-note" id="donationNote"></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section gallery" id="gallerySection">
+      <div class="container">
+        <div class="section-head">
+          <p class="kicker" id="galleryKicker"></p>
+          <h2 id="galleryTitle"></h2>
+        </div>
+        <div class="gallery-grid" id="galleryGrid"></div>
+      </div>
+    </section>
+
+    <section class="section resources" id="resourcesSection">
+      <div class="container two-col">
+        <div>
+          <div class="section-head left">
+            <p class="kicker" id="blogKicker"></p>
+            <h2 id="blogTitle"></h2>
+          </div>
+          <div class="blog-grid" id="blogGrid"></div>
+        </div>
+        <div>
+          <div class="section-head left">
+            <p class="kicker" id="faqKicker"></p>
+            <h2 id="faqTitle"></h2>
+          </div>
+          <div class="faq-list" id="faqList"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section contact" id="contactSection">
+      <div class="container two-col contact-wrap">
+        <div>
+          <div class="section-head left">
+            <p class="kicker" id="contactKicker"></p>
+            <h2 id="contactTitle"></h2>
+            <p id="contactIntro"></p>
+          </div>
+          <div class="contact-details" id="contactDetails"></div>
+        </div>
+        <form id="contactForm" class="contact-form">
+          <label for="nameInput" id="nameLabel"></label>
+          <input id="nameInput" name="name" required />
+          <label for="emailInput" id="emailLabel"></label>
+          <input id="emailInput" name="email" type="email" required />
+          <label for="messageInput" id="messageLabel"></label>
+          <textarea id="messageInput" name="message" rows="5" required></textarea>
+          <button class="btn btn-solid" type="submit" id="contactSubmit"></button>
+          <p class="form-note" id="contactNote"></p>
+        </form>
+      </div>
+    </section>
+
+    <section class="section newsletter" id="newsletterSection">
+      <div class="container newsletter-card reveal">
+        <div>
+          <p class="kicker" id="newsletterKicker"></p>
+          <h2 id="newsletterTitle"></h2>
+          <p id="newsletterText"></p>
+        </div>
+        <form id="newsletterForm" class="newsletter-form">
+          <label for="newsletterInput" class="sr-only" id="newsletterLabel"></label>
+          <input id="newsletterInput" name="newsletter" type="email" required />
+          <button class="btn btn-ghost" type="submit" id="newsletterSubmit"></button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-grid" id="footerGrid"></div>
+    <p class="copyright" id="copyright"></p>
+  </footer>
+
+  <button class="back-to-top" id="backToTop" aria-label="Back to top">Top</button>
+  <div id="toast" role="status" aria-live="polite" class="toast"></div>
+
+  <script src="assets/js/site-content.js"></script>
+  <script src="assets/js/main.js"></script>
+</body>
+</html>
