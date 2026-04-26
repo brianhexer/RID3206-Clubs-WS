@@ -26,6 +26,33 @@
     return el;
   };
 
+  const addScrollControls = (scroll, options = {}) => {
+    const stepRatio = Number(options.stepRatio) || 0.8;
+    const frame = create("div", "scroll-frame");
+    const prevButton = create("button", "scroll-arrow scroll-arrow-prev");
+    prevButton.type = "button";
+    prevButton.setAttribute("aria-label", options.prevLabel || "Scroll left");
+    prevButton.textContent = "❮";
+
+    const nextButton = create("button", "scroll-arrow scroll-arrow-next");
+    nextButton.type = "button";
+    nextButton.setAttribute("aria-label", options.nextLabel || "Scroll right");
+    nextButton.textContent = "❯";
+
+    const scrollByAmount = (direction) => {
+      const distance = Math.max(260, Math.round(scroll.clientWidth * stepRatio));
+      scroll.scrollBy({ left: distance * direction, behavior: "smooth" });
+    };
+
+    prevButton.addEventListener("click", () => scrollByAmount(-1));
+    nextButton.addEventListener("click", () => scrollByAmount(1));
+
+    frame.appendChild(prevButton);
+    frame.appendChild(scroll);
+    frame.appendChild(nextButton);
+    return frame;
+  };
+
   const showToast = (text) => {
     const toast = document.getElementById("toast");
     if (!toast) {
@@ -276,27 +303,11 @@
       });
     }
 
-    const scrollWrapper = create("div", "scroll-wrapper");
-    
-    const prevBtn = create("button", "scroll-arrow prev");
-    prevBtn.textContent = "‹";
-    prevBtn.type = "button";
-    prevBtn.addEventListener("click", () => {
-      scroll.scrollBy({ left: -300, behavior: "smooth" });
-    });
-    scrollWrapper.appendChild(prevBtn);
-    
-    scrollWrapper.appendChild(scroll);
-    
-    const nextBtn = create("button", "scroll-arrow next");
-    nextBtn.textContent = "›";
-    nextBtn.type = "button";
-    nextBtn.addEventListener("click", () => {
-      scroll.scrollBy({ left: 300, behavior: "smooth" });
-    });
-    scrollWrapper.appendChild(nextBtn);
-    
-    container.appendChild(scrollWrapper);
+    container.appendChild(addScrollControls(scroll, {
+      prevLabel: "Scroll sponsors left",
+      nextLabel: "Scroll sponsors right",
+      stepRatio: 0.9
+    }));
     sponsorsSection.appendChild(container);
     main.appendChild(sponsorsSection);
   };
@@ -443,27 +454,11 @@
       });
     }
 
-    const scrollWrapper = create("div", "scroll-wrapper");
-    
-    const prevBtn = create("button", "scroll-arrow prev");
-    prevBtn.textContent = "‹";
-    prevBtn.type = "button";
-    prevBtn.addEventListener("click", () => {
-      scroll.scrollBy({ left: -300, behavior: "smooth" });
-    });
-    scrollWrapper.appendChild(prevBtn);
-    
-    scrollWrapper.appendChild(scroll);
-    
-    const nextBtn = create("button", "scroll-arrow next");
-    nextBtn.textContent = "›";
-    nextBtn.type = "button";
-    nextBtn.addEventListener("click", () => {
-      scroll.scrollBy({ left: 300, behavior: "smooth" });
-    });
-    scrollWrapper.appendChild(nextBtn);
-    
-    container.appendChild(scrollWrapper);
+    container.appendChild(addScrollControls(scroll, {
+      prevLabel: "Scroll members left",
+      nextLabel: "Scroll members right",
+      stepRatio: 0.82
+    }));
     membersSection.appendChild(container);
     main.appendChild(membersSection);
   };
@@ -513,27 +508,11 @@
       });
     }
 
-    const scrollWrapper = create("div", "scroll-wrapper");
-    
-    const prevBtn = create("button", "scroll-arrow prev");
-    prevBtn.textContent = "‹";
-    prevBtn.type = "button";
-    prevBtn.addEventListener("click", () => {
-      scroll.scrollBy({ left: -300, behavior: "smooth" });
-    });
-    scrollWrapper.appendChild(prevBtn);
-    
-    scrollWrapper.appendChild(scroll);
-    
-    const nextBtn = create("button", "scroll-arrow next");
-    nextBtn.textContent = "›";
-    nextBtn.type = "button";
-    nextBtn.addEventListener("click", () => {
-      scroll.scrollBy({ left: 300, behavior: "smooth" });
-    });
-    scrollWrapper.appendChild(nextBtn);
-    
-    container.appendChild(scrollWrapper);
+    container.appendChild(addScrollControls(scroll, {
+      prevLabel: "Scroll testimonials left",
+      nextLabel: "Scroll testimonials right",
+      stepRatio: 0.88
+    }));
     testimonialsSection.appendChild(container);
     main.appendChild(testimonialsSection);
   };
@@ -598,27 +577,11 @@
       });
     }
 
-    const scrollWrapper = create("div", "scroll-wrapper");
-    
-    const prevBtn = create("button", "scroll-arrow prev");
-    prevBtn.textContent = "‹";
-    prevBtn.type = "button";
-    prevBtn.addEventListener("click", () => {
-      scroll.scrollBy({ left: -300, behavior: "smooth" });
-    });
-    scrollWrapper.appendChild(prevBtn);
-    
-    scrollWrapper.appendChild(scroll);
-    
-    const nextBtn = create("button", "scroll-arrow next");
-    nextBtn.textContent = "›";
-    nextBtn.type = "button";
-    nextBtn.addEventListener("click", () => {
-      scroll.scrollBy({ left: 300, behavior: "smooth" });
-    });
-    scrollWrapper.appendChild(nextBtn);
-    
-    container.appendChild(scrollWrapper);
+    container.appendChild(addScrollControls(scroll, {
+      prevLabel: "Scroll gallery left",
+      nextLabel: "Scroll gallery right",
+      stepRatio: 0.86
+    }));
     gallerySection.appendChild(container);
     main.appendChild(gallerySection);
   };
