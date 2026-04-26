@@ -19,7 +19,8 @@ window.SITE_CONTENT = {
       { key: "events", label: "Events", href: "events.html" },
       { key: "campaigns", label: "Campaigns", href: "campaigns.html" },
       { key: "stories", label: "Stories", href: "stories.html" },
-      { key: "contact", label: "Contact", href: "contact.html" }
+      { key: "contact", label: "Contact", href: "contact.html" },
+      { key: "admin", label: "Admin", href: "admin.html" }
     ],
     footerLinks: [
       { label: "Volunteer", href: "events.html" },
