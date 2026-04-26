@@ -58,6 +58,20 @@
     }
   };
 
+  const resolveApiBase = (content) => {
+    const configured = String(content?.site?.apiBaseUrl || "").trim();
+    if (configured) {
+      return configured.replace(/\/$/, "");
+    }
+
+    const saved = String(window.localStorage.getItem("rid3206_api_base_url") || "").trim();
+    if (saved) {
+      return saved.replace(/\/$/, "");
+    }
+
+    return "";
+  };
+
   const setMetaTag = (selector, attributes, value) => {
     let tag = document.head.querySelector(selector);
     if (!tag) {
@@ -80,7 +94,8 @@
 
   const fetchLiveContent = async () => {
     try {
-      const response = await fetch("/api/content", { headers: { Accept: "application/json" } });
+      const apiBase = resolveApiBase(FALLBACK_CONTENT || {});
+      const response = await fetch(`${apiBase}/api/content`, { headers: { Accept: "application/json" }, credentials: "include" });
       if (!response.ok) {
         throw new Error(`Failed content request: ${response.status}`);
       }
@@ -94,9 +109,10 @@
     }
   };
 
-  const fetchEventMedia = async () => {
+  const fetchEventMedia = async (content) => {
     try {
-      const response = await fetch("/api/events/media", { headers: { Accept: "application/json" } });
+      const apiBase = resolveApiBase(content);
+      const response = await fetch(`${apiBase}/api/events/media`, { headers: { Accept: "application/json" }, credentials: "include" });
       if (!response.ok) {
         return [];
       }
@@ -167,27 +183,430 @@
   };
 
   const renderHero = (main, pageData) => {
-    const section = create("section", "hero section");
+    const section = create("section", "hero-section");
+    section.id = "hero";
     const container = create("div", "container");
-    const copy = create("div", "hero-copy");
 
-    copy.appendChild(create("p", "kicker", pageData.kicker));
-    copy.appendChild(create("h1", "", pageData.title));
-    copy.appendChild(create("p", "lead", pageData.intro));
-
-    if (Array.isArray(pageData.actions) && pageData.actions.length > 0) {
-      const actions = create("div", "hero-actions");
-      pageData.actions.forEach((action) => {
-        const link = create("a", `btn ${action.style === "outline" ? "btn-outline" : "btn-solid"}`, action.label);
-        link.href = action.href;
-        actions.appendChild(link);
-      });
-      copy.appendChild(actions);
+    if (pageData.title) {
+      container.appendChild(create("h1", "", pageData.title));
+    }
+    if (pageData.subtitle) {
+      container.appendChild(create("p", "subtitle", pageData.subtitle));
+    }
+    if (pageData.tagline) {
+      container.appendChild(create("p", "tagline", pageData.tagline));
     }
 
-    container.appendChild(copy);
     section.appendChild(container);
     main.appendChild(section);
+  };
+
+  const renderAbout = (main, section) => {
+    const aboutSection = create("section", "about-section");
+    aboutSection.id = section.id || "about";
+    const container = create("div", "container");
+
+    const aboutContainer = create("div", "about-container");
+
+    // Background image
+    if (section.backgroundImage) {
+      const bgDiv = create("div", "about-bg");
+      const img = create("img");
+      img.src = section.backgroundImage;
+      img.alt = "About the club";
+      img.loading = "lazy";
+      bgDiv.appendChild(img);
+      aboutContainer.appendChild(bgDiv);
+    }
+
+    // Content
+    const contentDiv = create("div", "about-content");
+    if (section.title) {
+      contentDiv.appendChild(create("h2", "", section.title));
+    }
+    if (section.content) {
+      contentDiv.appendChild(create("p", "", section.content));
+    }
+
+    // Highlights
+    if (Array.isArray(section.highlights) && section.highlights.length > 0) {
+      const highlightsDiv = create("div", "about-highlights");
+      section.highlights.forEach((highlight) => {
+        const box = create("div", "highlight-box");
+        const value = create("div", "value", highlight.value);
+        const label = create("div", "label", highlight.label);
+        box.appendChild(value);
+        box.appendChild(label);
+        highlightsDiv.appendChild(box);
+      });
+      contentDiv.appendChild(highlightsDiv);
+    }
+
+    aboutContainer.appendChild(contentDiv);
+    container.appendChild(aboutContainer);
+    aboutSection.appendChild(container);
+    main.appendChild(aboutSection);
+  };
+
+  const renderSponsors = (main, section) => {
+    const sponsorsSection = create("section", "sponsors-section");
+    sponsorsSection.id = section.id || "sponsors";
+    const container = create("div", "container");
+
+    if (section.title) {
+      const h2 = create("h2", "", section.title);
+      container.appendChild(h2);
+    }
+    if (section.subtitle) {
+      const subtitle = create("p", "subtitle", section.subtitle);
+      container.appendChild(subtitle);
+    }
+
+    const scroll = create("div", "sponsors-scroll");
+    if (Array.isArray(section.sponsors)) {
+      section.sponsors.forEach((sponsor) => {
+        const item = create("a", "sponsor-item");
+        item.href = sponsor.url || "#";
+        const img = create("img");
+        img.src = sponsor.image;
+        img.alt = sponsor.name;
+        img.loading = "lazy";
+        item.appendChild(img);
+        scroll.appendChild(item);
+      });
+    }
+
+    container.appendChild(scroll);
+    sponsorsSection.appendChild(container);
+    main.appendChild(sponsorsSection);
+  };
+
+  const renderProjects = (main, section) => {
+    const projectsSection = create("section", "projects-section");
+    projectsSection.id = section.id || "projects";
+    const container = create("div", "container");
+
+    if (section.title) {
+      container.appendChild(create("h2", "", section.title));
+    }
+    if (section.subtitle) {
+      container.appendChild(create("p", "subtitle", section.subtitle));
+    }
+
+    // Filter buttons
+    const filterDiv = create("div", "projects-filter");
+    const allBtn = create("button", "filter-btn active");
+    allBtn.textContent = "All";
+    allBtn.dataset.filter = "all";
+    filterDiv.appendChild(allBtn);
+
+    const upcomingBtn = create("button", "filter-btn");
+    upcomingBtn.textContent = "Upcoming";
+    upcomingBtn.dataset.filter = "upcoming";
+    filterDiv.appendChild(upcomingBtn);
+
+    const completedBtn = create("button", "filter-btn");
+    completedBtn.textContent = "Completed";
+    completedBtn.dataset.filter = "completed";
+    filterDiv.appendChild(completedBtn);
+
+    container.appendChild(filterDiv);
+
+    // Projects grid
+    const grid = create("div", "projects-grid");
+    if (Array.isArray(section.projects)) {
+      section.projects.forEach((project) => {
+        const card = create("article", "project-card reveal");
+        card.dataset.category = project.category;
+
+        if (project.image) {
+          const img = create("img");
+          img.src = project.image;
+          img.alt = project.name;
+          img.loading = "lazy";
+          card.appendChild(img);
+        }
+
+        const info = create("div", "project-info");
+
+        const category = create("span", "project-category " + project.category, project.category === "upcoming" ? "Upcoming" : "Completed");
+        info.appendChild(category);
+
+        const h3 = create("h3", "", project.name);
+        info.appendChild(h3);
+
+        const meta = create("div", "project-meta");
+        const dateSpan = create("span", "");
+        dateSpan.textContent = "📅 " + project.date;
+        meta.appendChild(dateSpan);
+
+        const timeSpan = create("span", "");
+        timeSpan.textContent = "🕐 " + project.time;
+        meta.appendChild(timeSpan);
+
+        const venueSpan = create("span", "");
+        venueSpan.textContent = "📍 " + project.venue;
+        meta.appendChild(venueSpan);
+
+        info.appendChild(meta);
+
+        const desc = create("p", "project-description", project.description);
+        info.appendChild(desc);
+
+        card.appendChild(info);
+        grid.appendChild(card);
+      });
+    }
+
+    container.appendChild(grid);
+
+    // Filter functionality
+    const filterCards = (category) => {
+      grid.querySelectorAll(".project-card").forEach((card) => {
+        if (category === "all" || card.dataset.category === category) {
+          card.style.display = "block";
+        } else {
+          card.style.display = "none";
+        }
+      });
+    };
+
+    filterDiv.querySelectorAll("button").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        filterDiv.querySelectorAll("button").forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        filterCards(btn.dataset.filter);
+      });
+    });
+
+    projectsSection.appendChild(container);
+    main.appendChild(projectsSection);
+  };
+
+  const renderMembers = (main, section) => {
+    const membersSection = create("section", "members-section");
+    membersSection.id = section.id || "members";
+    const container = create("div", "container");
+
+    if (section.title) {
+      container.appendChild(create("h2", "", section.title));
+    }
+    if (section.subtitle) {
+      container.appendChild(create("p", "subtitle", section.subtitle));
+    }
+
+    const scroll = create("div", "members-scroll");
+    if (Array.isArray(section.boardMembers)) {
+      section.boardMembers.forEach((member) => {
+        const card = create("article", "member-card");
+
+        const photo = create("div", "member-photo");
+        const img = create("img");
+        img.src = member.image;
+        img.alt = member.name;
+        img.loading = "lazy";
+        photo.appendChild(img);
+        card.appendChild(photo);
+
+        const info = create("div", "member-info");
+        const name = create("p", "member-name", member.name);
+        info.appendChild(name);
+
+        const position = create("p", "member-position", member.position);
+        info.appendChild(position);
+
+        const bio = create("p", "member-bio", member.bio);
+        info.appendChild(bio);
+
+        card.appendChild(info);
+        scroll.appendChild(card);
+      });
+    }
+
+    container.appendChild(scroll);
+    membersSection.appendChild(container);
+    main.appendChild(membersSection);
+  };
+
+  const renderTestimonials = (main, section) => {
+    const testimonialsSection = create("section", "testimonials-section");
+    testimonialsSection.id = section.id || "testimonials";
+    const container = create("div", "container");
+
+    if (section.title) {
+      container.appendChild(create("h2", "", section.title));
+    }
+    if (section.subtitle) {
+      container.appendChild(create("p", "subtitle", section.subtitle));
+    }
+
+    const scroll = create("div", "testimonials-scroll");
+    if (Array.isArray(section.testimonials)) {
+      section.testimonials.forEach((testimonial) => {
+        const card = create("article", "testimonial-card");
+
+        const quote = create("p", "testimonial-quote", testimonial.text);
+        card.appendChild(quote);
+
+        const author = create("div", "testimonial-author");
+
+        if (testimonial.image) {
+          const avatar = create("div", "testimonial-avatar");
+          const img = create("img");
+          img.src = testimonial.image;
+          img.alt = testimonial.name;
+          img.loading = "lazy";
+          avatar.appendChild(img);
+          author.appendChild(avatar);
+        }
+
+        const nameDiv = create("div", "");
+        const name = create("p", "testimonial-name", testimonial.name);
+        nameDiv.appendChild(name);
+
+        const role = create("p", "testimonial-role", testimonial.role);
+        nameDiv.appendChild(role);
+
+        author.appendChild(nameDiv);
+        card.appendChild(author);
+        scroll.appendChild(card);
+      });
+    }
+
+    container.appendChild(scroll);
+    testimonialsSection.appendChild(container);
+    main.appendChild(testimonialsSection);
+  };
+
+  const renderGallery = (main, section) => {
+    const gallerySection = create("section", "gallery-section");
+    gallerySection.id = section.id || "gallery";
+    const container = create("div", "container");
+
+    if (section.title) {
+      container.appendChild(create("h2", "", section.title));
+    }
+    if (section.subtitle) {
+      container.appendChild(create("p", "subtitle", section.subtitle));
+    }
+
+    const scroll = create("div", "gallery-scroll");
+    let galleryIndex = 0;
+
+    if (Array.isArray(section.gallery)) {
+      section.gallery.forEach((item, idx) => {
+        const card = create("article", "gallery-card");
+        card.style.cursor = "pointer";
+
+        const imageDiv = create("div", "gallery-image");
+
+        const overlay = create("div", "gallery-overlay");
+        const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        svg.setAttribute("viewBox", "0 0 24 24");
+        const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        circle.setAttribute("cx", "12");
+        circle.setAttribute("cy", "12");
+        circle.setAttribute("r", "10");
+        const polygon = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+        polygon.setAttribute("points", "10,8 16,12 10,16");
+        svg.appendChild(circle);
+        svg.appendChild(polygon);
+        overlay.appendChild(svg);
+        imageDiv.appendChild(overlay);
+
+        const img = create("img");
+        img.src = item.image;
+        img.alt = item.name;
+        img.loading = "lazy";
+        imageDiv.appendChild(img);
+        card.appendChild(imageDiv);
+
+        const info = create("div", "gallery-info");
+        const name = create("p", "gallery-name", item.name);
+        info.appendChild(name);
+
+        const desc = create("p", "gallery-description", item.description);
+        info.appendChild(desc);
+
+        card.appendChild(info);
+
+        card.addEventListener("click", () => {
+          showGalleryModal(section.gallery, idx);
+        });
+
+        scroll.appendChild(card);
+      });
+    }
+
+    container.appendChild(scroll);
+    gallerySection.appendChild(container);
+    main.appendChild(gallerySection);
+  };
+
+  const showGalleryModal = (gallery, startIndex) => {
+    let currentIndex = startIndex;
+
+    // Create modal if it doesn't exist
+    let modal = document.getElementById("galleryModal");
+    if (!modal) {
+      modal = create("div", "modal");
+      modal.id = "galleryModal";
+
+      const content = create("div", "modal-content");
+
+      const img = create("img", "modal-image");
+      content.appendChild(img);
+
+      const prevBtn = create("button", "modal-nav prev");
+      prevBtn.textContent = "❮";
+      prevBtn.type = "button";
+      content.appendChild(prevBtn);
+
+      const nextBtn = create("button", "modal-nav next");
+      nextBtn.textContent = "❯";
+      nextBtn.type = "button";
+      content.appendChild(nextBtn);
+
+      const closeBtn = create("button", "modal-close");
+      closeBtn.textContent = "✕";
+      closeBtn.type = "button";
+      content.appendChild(closeBtn);
+
+      modal.appendChild(content);
+
+      closeBtn.addEventListener("click", () => {
+        modal.classList.remove("active");
+      });
+
+      prevBtn.addEventListener("click", () => {
+        currentIndex = (currentIndex - 1 + gallery.length) % gallery.length;
+        updateModalImage();
+      });
+
+      nextBtn.addEventListener("click", () => {
+        currentIndex = (currentIndex + 1) % gallery.length;
+        updateModalImage();
+      });
+
+      modal.addEventListener("click", (e) => {
+        if (e.target === modal) {
+          modal.classList.remove("active");
+        }
+      });
+
+      document.body.appendChild(modal);
+    }
+
+    const updateModalImage = () => {
+      const img = modal.querySelector(".modal-image");
+      if (gallery[currentIndex]) {
+        img.src = gallery[currentIndex].image;
+        img.alt = gallery[currentIndex].name;
+      }
+    };
+
+    updateModalImage();
+    modal.classList.add("active");
   };
 
   const createSectionShell = (title, intro) => {
@@ -546,40 +965,48 @@
     const sections = Array.isArray(pageData.sections) ? pageData.sections : [];
 
     sections.forEach((sectionConfig) => {
-      let rendered = null;
-      if (sectionConfig.type === "cards") {
-        rendered = renderCards(sectionConfig);
-      }
-      if (sectionConfig.type === "metrics") {
-        rendered = renderMetrics(sectionConfig);
-      }
-      if (sectionConfig.type === "timeline") {
-        rendered = renderTimeline(sectionConfig);
-      }
-      if (sectionConfig.type === "list") {
-        rendered = renderList(sectionConfig);
-      }
-      if (sectionConfig.type === "progress") {
-        rendered = renderProgress(sectionConfig);
-      }
-      if (sectionConfig.type === "donate") {
-        rendered = renderDonate(sectionConfig, content);
-      }
-      if (sectionConfig.type === "quotes") {
-        rendered = renderQuotes(sectionConfig);
-      }
-      if (sectionConfig.type === "faq") {
-        rendered = renderFaq(sectionConfig);
-      }
-      if (sectionConfig.type === "contact") {
-        rendered = renderContact(sectionConfig, content);
-      }
-      if (sectionConfig.type === "newsletter") {
-        rendered = renderNewsletter(sectionConfig, content);
-      }
-
-      if (rendered) {
-        main.appendChild(rendered);
+      // New section types
+      if (sectionConfig.type === "about") {
+        renderAbout(main, sectionConfig);
+      } else if (sectionConfig.type === "sponsors") {
+        renderSponsors(main, sectionConfig);
+      } else if (sectionConfig.type === "projects") {
+        renderProjects(main, sectionConfig);
+      } else if (sectionConfig.type === "members") {
+        renderMembers(main, sectionConfig);
+      } else if (sectionConfig.type === "testimonials") {
+        renderTestimonials(main, sectionConfig);
+      } else if (sectionConfig.type === "gallery") {
+        renderGallery(main, sectionConfig);
+      } else if (sectionConfig.type === "cards") {
+        renderCards(sectionConfig);
+      } else if (sectionConfig.type === "metrics") {
+        const rendered = renderMetrics(sectionConfig);
+        if (rendered) main.appendChild(rendered);
+      } else if (sectionConfig.type === "timeline") {
+        const rendered = renderTimeline(sectionConfig);
+        if (rendered) main.appendChild(rendered);
+      } else if (sectionConfig.type === "list") {
+        const rendered = renderList(sectionConfig);
+        if (rendered) main.appendChild(rendered);
+      } else if (sectionConfig.type === "progress") {
+        const rendered = renderProgress(sectionConfig);
+        if (rendered) main.appendChild(rendered);
+      } else if (sectionConfig.type === "donate") {
+        const rendered = renderDonate(sectionConfig, content);
+        if (rendered) main.appendChild(rendered);
+      } else if (sectionConfig.type === "quotes") {
+        const rendered = renderQuotes(sectionConfig);
+        if (rendered) main.appendChild(rendered);
+      } else if (sectionConfig.type === "faq") {
+        const rendered = renderFaq(sectionConfig);
+        if (rendered) main.appendChild(rendered);
+      } else if (sectionConfig.type === "contact") {
+        const rendered = renderContact(sectionConfig, content);
+        if (rendered) main.appendChild(rendered);
+      } else if (sectionConfig.type === "newsletter") {
+        const rendered = renderNewsletter(sectionConfig, content);
+        if (rendered) main.appendChild(rendered);
       }
     });
 
@@ -880,7 +1307,7 @@
       return;
     }
 
-    const eventMedia = pageKey === "events" ? await fetchEventMedia() : [];
+    const eventMedia = pageKey === "events" ? await fetchEventMedia(content) : [];
 
     applyPageMetadata(content, pageData);
     renderHeader(content);

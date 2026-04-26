@@ -4,6 +4,7 @@
 
   const loginForm = document.getElementById("loginForm");
   const loginMessage = document.getElementById("loginMessage");
+  const apiBaseInput = document.getElementById("apiBaseUrl");
 
   const contentForm = document.getElementById("contentForm");
   const contentEditor = document.getElementById("contentEditor");
@@ -14,6 +15,14 @@
   const mediaList = document.getElementById("mediaList");
 
   const logoutButton = document.getElementById("logoutButton");
+
+  const normalizeBase = (value) => String(value || "").trim().replace(/\/$/, "");
+
+  const getApiBase = () => normalizeBase(apiBaseInput ? apiBaseInput.value : "");
+
+  const apiUrl = (path) => `${getApiBase()}${path}`;
+
+  const fetchApi = (path, options) => fetch(apiUrl(path), { credentials: "include", ...(options || {}) });
 
   const setMessage = (element, text, isError) => {
     element.textContent = text;
@@ -60,7 +69,7 @@
   };
 
   const loadContent = async () => {
-    const response = await fetch("/api/content", { headers: { Accept: "application/json" } });
+    const response = await fetchApi("/api/content", { headers: { Accept: "application/json" } });
     if (!response.ok) {
       throw new Error("Failed to load site content");
     }
@@ -70,7 +79,7 @@
   };
 
   const loadMedia = async () => {
-    const response = await fetch("/api/events/media", { headers: { Accept: "application/json" } });
+    const response = await fetchApi("/api/events/media", { headers: { Accept: "application/json" } });
     if (!response.ok) {
       throw new Error("Failed to load event media");
     }
@@ -91,7 +100,7 @@
   };
 
   const checkSession = async () => {
-    const response = await fetch("/api/auth/session", { headers: { Accept: "application/json" } });
+    const response = await fetchApi("/api/auth/session", { headers: { Accept: "application/json" } });
     if (!response.ok) {
       showLogin();
       return;
@@ -114,14 +123,15 @@
     const username = String(formData.get("username") || "");
     const password = String(formData.get("password") || "");
 
-    const response = await fetch("/api/auth/login", {
+    const response = await fetchApi("/api/auth/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username, password })
     });
 
     if (!response.ok) {
-      setMessage(loginMessage, "Invalid username or password.", true);
+      const payload = await response.json().catch(() => ({ message: "Invalid username or password." }));
+      setMessage(loginMessage, payload.message || "Invalid username or password.", true);
       return;
     }
 
@@ -142,14 +152,15 @@
       return;
     }
 
-    const response = await fetch("/api/content", {
+    const response = await fetchApi("/api/content", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(parsed)
     });
 
     if (!response.ok) {
-      setMessage(contentMessage, "Save failed. Check auth/session and content format.", true);
+      const payload = await response.json().catch(() => ({ message: "Save failed" }));
+      setMessage(contentMessage, payload.message || "Save failed. Check auth/session and content format.", true);
       return;
     }
 
@@ -167,14 +178,14 @@
       return;
     }
 
-    const response = await fetch("/api/events/media", {
+    const response = await fetchApi("/api/events/media", {
       method: "POST",
       body: data
     });
 
     if (!response.ok) {
-      const payload = await response.json().catch(() => ({ message: "Upload failed" }));
-      setMessage(mediaMessage, payload.message || "Upload failed.", true);
+      const payload = await response.json().catch(() => ({ message: "Upload failed. Check API Base URL and admin session." }));
+      setMessage(mediaMessage, payload.message || "Upload failed. Check API Base URL and admin session.", true);
       return;
     }
 
@@ -185,9 +196,19 @@
   });
 
   logoutButton.addEventListener("click", async () => {
-    await fetch("/api/auth/logout", { method: "POST" });
+    await fetchApi("/api/auth/logout", { method: "POST" });
     showLogin();
   });
+
+  if (apiBaseInput) {
+    apiBaseInput.value = normalizeBase(window.localStorage.getItem("rid3206_api_base_url") || "");
+    apiBaseInput.addEventListener("change", () => {
+      window.localStorage.setItem("rid3206_api_base_url", getApiBase());
+    });
+    apiBaseInput.addEventListener("blur", () => {
+      window.localStorage.setItem("rid3206_api_base_url", getApiBase());
+    });
+  }
 
   checkSession().catch(() => {
     showLogin();

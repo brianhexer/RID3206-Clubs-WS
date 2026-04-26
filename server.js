@@ -1,6 +1,7 @@
 const express = require("express");
 const session = require("express-session");
 const multer = require("multer");
+const cors = require("cors");
 const path = require("path");
 const fs = require("fs");
 const fsp = require("fs/promises");
@@ -15,9 +16,31 @@ const ROOT = __dirname;
 const SITE_CONTENT_PATH = path.join(ROOT, "assets", "js", "site-content.js");
 const EVENT_UPLOAD_DIR = path.join(ROOT, "assets", "uploads", "events");
 const isProduction = process.env.NODE_ENV === "production";
+const allowedOrigins = String(process.env.ALLOWED_ORIGIN || "")
+  .split(",")
+  .map((item) => item.trim())
+  .filter(Boolean);
+const cookieSameSite = String(process.env.COOKIE_SAME_SITE || "lax").toLowerCase();
 
 app.disable("x-powered-by");
 app.set("trust proxy", 1);
+
+const corsOptions = {
+  credentials: true,
+  origin: (origin, callback) => {
+    if (!origin) {
+      callback(null, true);
+      return;
+    }
+
+    if (allowedOrigins.length === 0 || allowedOrigins.includes(origin)) {
+      callback(null, true);
+      return;
+    }
+
+    callback(new Error("Origin not allowed"));
+  }
+};
 
 const ensureDirectory = async (dirPath) => {
   await fsp.mkdir(dirPath, { recursive: true });
@@ -111,6 +134,7 @@ const upload = multer({
 
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
+app.use(cors(corsOptions));
 app.use(
   session({
     secret: process.env.SESSION_SECRET || "change-this-session-secret",
@@ -119,7 +143,7 @@ app.use(
     saveUninitialized: false,
     cookie: {
       httpOnly: true,
-      sameSite: "lax",
+      sameSite: cookieSameSite,
       secure: isProduction,
       maxAge: 1000 * 60 * 60 * 8
     }
