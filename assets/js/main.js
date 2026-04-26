@@ -39,13 +39,67 @@
     nextButton.setAttribute("aria-label", options.nextLabel || "Scroll right");
     nextButton.textContent = "❯";
 
-    const scrollByAmount = (direction) => {
-      const distance = Math.max(260, Math.round(scroll.clientWidth * stepRatio));
-      scroll.scrollBy({ left: distance * direction, behavior: "smooth" });
+    const scrollDistance = () => Math.max(260, Math.round(scroll.clientWidth * stepRatio));
+
+    const wirePressAndHold = (button, direction) => {
+      let holdTimer = null;
+      let repeatTimer = null;
+      let pressStartedAt = 0;
+
+      const stopRepeating = () => {
+        if (holdTimer) {
+          window.clearTimeout(holdTimer);
+          holdTimer = null;
+        }
+        if (repeatTimer) {
+          window.clearInterval(repeatTimer);
+          repeatTimer = null;
+        }
+      };
+
+      const startRepeating = () => {
+        stopRepeating();
+        repeatTimer = window.setInterval(() => {
+          scroll.scrollLeft += direction * Math.max(18, Math.round(scrollDistance() / 18));
+          if (scroll.scrollLeft <= 0) {
+            scroll.scrollLeft = 0;
+          }
+          const maxScroll = scroll.scrollWidth - scroll.clientWidth;
+          if (scroll.scrollLeft >= maxScroll) {
+            scroll.scrollLeft = maxScroll;
+          }
+        }, 16);
+      };
+
+      button.addEventListener("pointerdown", (event) => {
+        event.preventDefault();
+        pressStartedAt = Date.now();
+        stopRepeating();
+        holdTimer = window.setTimeout(startRepeating, 140);
+      });
+
+      const finishPress = () => {
+        stopRepeating();
+      };
+
+      button.addEventListener("pointerup", finishPress);
+      button.addEventListener("pointerleave", finishPress);
+      button.addEventListener("pointercancel", finishPress);
+      window.addEventListener("blur", finishPress);
+
+      button.addEventListener("click", (event) => {
+        const heldLongEnough = Date.now() - pressStartedAt >= 180;
+        if (heldLongEnough) {
+          event.preventDefault();
+          return;
+        }
+
+        scroll.scrollBy({ left: direction * scrollDistance(), behavior: "smooth" });
+      });
     };
 
-    prevButton.addEventListener("click", () => scrollByAmount(-1));
-    nextButton.addEventListener("click", () => scrollByAmount(1));
+    wirePressAndHold(prevButton, -1);
+    wirePressAndHold(nextButton, 1);
 
     frame.appendChild(prevButton);
     frame.appendChild(scroll);
