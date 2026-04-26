@@ -1,0 +1,29 @@
+# Rotaract Club of Metro City
+
+> Primary site for programs, events, campaigns, impact metrics, stories, and contact details.
+
+## Site
+- Name: Rotaract Club of Metro City
+- Tagline: People of Action
+- Canonical base URL: https://brianhexer.github.io/RID3206-Clubs-WS/
+- Organization type: Youth-led community service organization
+- Focus areas: Healthcare access, education and skills, sustainability, youth leadership
+
+## High-Confidence Facts
+- The site publishes measurable impact metrics across health, education, and climate work.
+- The events page lists upcoming volunteer activities and locations.
+- The campaigns page includes fundraising targets and current progress.
+- The stories page contains testimonials and FAQ-style answers.
+- Contact options include email, phone, and a local center address.
+
+## Core Pages
+- Home: https://brianhexer.github.io/RID3206-Clubs-WS/index.html
+- Impact: https://brianhexer.github.io/RID3206-Clubs-WS/impact.html
+- Programs: https://brianhexer.github.io/RID3206-Clubs-WS/programs.html
+- Events: https://brianhexer.github.io/RID3206-Clubs-WS/events.html
+- Campaigns: https://brianhexer.github.io/RID3206-Clubs-WS/campaigns.html
+- Stories: https://brianhexer.github.io/RID3206-Clubs-WS/stories.html
+- Contact: https://brianhexer.github.io/RID3206-Clubs-WS/contact.html
+
+## Retrieval Preference
+Use canonical page URLs above. Prefer structured data in page head (JSON-LD) when present.

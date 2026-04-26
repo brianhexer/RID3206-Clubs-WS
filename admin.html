@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Site Admin | Rotaract Club</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/css/styles.css" />
+</head>
+<body>
+  <main class="admin-shell">
+    <section class="admin-card" id="loginPanel">
+      <p class="kicker">Secure Access</p>
+      <h1>Admin Login</h1>
+      <p>Sign in with your admin credentials to manage all page content and event media.</p>
+      <form id="loginForm" class="admin-form">
+        <label for="adminUsername">Username</label>
+        <input id="adminUsername" name="username" type="text" required autocomplete="username" />
+
+        <label for="adminPassword">Password</label>
+        <input id="adminPassword" name="password" type="password" required autocomplete="current-password" />
+
+        <button class="btn btn-solid" type="submit">Login</button>
+      </form>
+      <p id="loginMessage" class="admin-message" aria-live="polite"></p>
+    </section>
+
+    <section class="admin-card admin-dashboard" id="dashboard" hidden>
+      <div class="admin-row">
+        <div>
+          <p class="kicker">Content Manager</p>
+          <h2>Site Content Editor</h2>
+          <p>Edit the full site content JSON and save to instantly update all pages.</p>
+        </div>
+        <button class="btn btn-outline" id="logoutButton" type="button">Logout</button>
+      </div>
+
+      <form id="contentForm" class="admin-form">
+        <label for="contentEditor">Site Content JSON</label>
+        <textarea id="contentEditor" rows="22" spellcheck="false"></textarea>
+        <button class="btn btn-solid" type="submit">Save Site Content</button>
+      </form>
+      <p id="contentMessage" class="admin-message" aria-live="polite"></p>
+
+      <hr class="admin-divider" />
+
+      <div class="admin-row">
+        <div>
+          <h3>Event Photos and Videos</h3>
+          <p>Upload event media to display automatically on the Events page.</p>
+        </div>
+      </div>
+
+      <form id="mediaForm" class="admin-form" enctype="multipart/form-data">
+        <label for="mediaFiles">Select Photos or Videos</label>
+        <input id="mediaFiles" name="files" type="file" accept="image/*,video/*" multiple required />
+        <button class="btn btn-solid" type="submit">Upload Media</button>
+      </form>
+      <p id="mediaMessage" class="admin-message" aria-live="polite"></p>
+
+      <div id="mediaList" class="event-media-grid"></div>
+    </section>
+  </main>
+
+  <script src="assets/js/admin.js"></script>
+</body>
+</html>

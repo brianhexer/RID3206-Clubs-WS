@@ -2,6 +2,16 @@ window.SITE_CONTENT = {
   site: {
     title: "Rotaract Club of Metro City",
     tagline: "People of Action",
+    baseUrl: "https://brianhexer.github.io/RID3206-Clubs-WS",
+    locale: "en_IN",
+    defaultImage: "assets/img/social-preview.svg",
+    geo: {
+      city: "Metro City",
+      region: "Tamil Nadu",
+      regionCode: "IN-TN",
+      country: "IN"
+    },
+    sameAs: [],
     nav: [
       { key: "home", label: "Home", href: "index.html" },
       { key: "impact", label: "Impact", href: "impact.html" },
@@ -37,6 +47,26 @@ window.SITE_CONTENT = {
       title: "Service, Leadership, and Lasting Community Impact",
       intro:
         "We design high-impact local projects and empower young leaders to solve real community needs.",
+      seo: {
+        slug: "index.html",
+        keywords: [
+          "Rotaract club",
+          "community service",
+          "youth leadership",
+          "volunteering",
+          "social impact"
+        ],
+        quickAnswers: [
+          {
+            question: "What is Rotaract Club of Metro City?",
+            answer: "A youth-led service organization focused on measurable local impact through health, education, and sustainability programs."
+          },
+          {
+            question: "How can I join or volunteer?",
+            answer: "Visit the Events or Contact pages to register interest and select opportunities based on your availability."
+          }
+        ]
+      },
       actions: [
         { label: "Explore Programs", href: "programs.html", style: "solid" },
         { label: "Join as Volunteer", href: "events.html", style: "outline" }
@@ -80,6 +110,16 @@ window.SITE_CONTENT = {
       kicker: "Impact Dashboard",
       title: "Results You Can Track",
       intro: "From health drives to education support, our outcomes are measurable.",
+      seo: {
+        slug: "impact.html",
+        keywords: ["impact dashboard", "ngo metrics", "community outcomes", "Rotaract impact"],
+        quickAnswers: [
+          {
+            question: "What impact does this club track?",
+            answer: "Health screenings, students mentored, trees planted, and women-supported metrics are tracked and updated regularly."
+          }
+        ]
+      },
       sections: [
         {
           type: "metrics",
@@ -115,6 +155,16 @@ window.SITE_CONTENT = {
       kicker: "Flagship Programs",
       title: "Structured Projects With Clear Outcomes",
       intro: "Each program includes objectives, partner support, and measurable milestones.",
+      seo: {
+        slug: "programs.html",
+        keywords: ["health programs", "education mentoring", "climate action", "youth leadership labs"],
+        quickAnswers: [
+          {
+            question: "What programs are available?",
+            answer: "Core initiatives include health access, education and skills, sustainability action, and youth leadership development."
+          }
+        ]
+      },
       sections: [
         {
           type: "cards",
@@ -148,6 +198,16 @@ window.SITE_CONTENT = {
       kicker: "Upcoming Events",
       title: "Join Us On Ground",
       intro: "Choose your cause and contribute with your time, skills, or resources.",
+      seo: {
+        slug: "events.html",
+        keywords: ["volunteer events", "Rotaract activities", "blood donation drive", "community event"],
+        quickAnswers: [
+          {
+            question: "How do I volunteer for upcoming drives?",
+            answer: "Open the Events page, choose a listed activity, and then use the Contact page to share your available dates."
+          }
+        ]
+      },
       sections: [
         {
           type: "timeline",
@@ -189,6 +249,16 @@ window.SITE_CONTENT = {
       kicker: "Active Campaigns",
       title: "Fundraising and Action Goals",
       intro: "Support verified campaigns with transparent target progress.",
+      seo: {
+        slug: "campaigns.html",
+        keywords: ["fundraising campaigns", "school health kits", "community library", "women entrepreneur support"],
+        quickAnswers: [
+          {
+            question: "Are campaign goals transparent?",
+            answer: "Yes. Each campaign lists the amount raised, funding goal, and current completion percentage."
+          }
+        ]
+      },
       sections: [
         {
           type: "progress",
@@ -226,6 +296,20 @@ window.SITE_CONTENT = {
       kicker: "Stories and Insights",
       title: "Voices From The Field",
       intro: "Real testimonials, updates, and frequently asked questions.",
+      seo: {
+        slug: "stories.html",
+        keywords: ["Rotaract stories", "volunteer testimonials", "ngo faq", "community impact stories"],
+        quickAnswers: [
+          {
+            question: "Can organizations partner with the club?",
+            answer: "Yes. NGOs, schools, hospitals, and local businesses are welcome to collaborate on initiatives."
+          },
+          {
+            question: "Who can join Rotaract Club?",
+            answer: "Students and young professionals interested in service and leadership can apply to participate."
+          }
+        ]
+      },
       sections: [
         {
           type: "quotes",
@@ -272,6 +356,16 @@ window.SITE_CONTENT = {
       kicker: "Connect With Us",
       title: "Let Us Build Impact Together",
       intro: "Reach us for partnerships, volunteer registration, or project proposals.",
+      seo: {
+        slug: "contact.html",
+        keywords: ["contact Rotaract", "volunteer registration", "ngo partnership", "community proposal"],
+        quickAnswers: [
+          {
+            question: "How can I contact the club?",
+            answer: "Use the contact form or reach out by email, phone, or visiting the listed community center address."
+          }
+        ]
+      },
       sections: [
         {
           type: "contact",

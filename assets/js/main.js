@@ -1,16 +1,19 @@
 (function () {
-  const content = window.SITE_CONTENT;
+  const FALLBACK_CONTENT = window.SITE_CONTENT;
 
-  if (!content) {
-    return;
-  }
+  const currentPath = window.location.pathname.split("/").pop() || "index.html";
+  const pageKeyFromPath = {
+    "": "home",
+    "index.html": "home",
+    "impact.html": "impact",
+    "programs.html": "programs",
+    "events.html": "events",
+    "campaigns.html": "campaigns",
+    "stories.html": "stories",
+    "contact.html": "contact"
+  };
 
-  const pageKey = document.body.dataset.page || "home";
-  const pageData = content.pages[pageKey] || content.pages.home;
-
-  if (!pageData || !content.site || !Array.isArray(content.site.nav)) {
-    return;
-  }
+  const pageKey = window.PAGE_KEY || pageKeyFromPath[currentPath] || "home";
 
   const create = (tag, className, text) => {
     const el = document.createElement(tag);
@@ -34,9 +37,77 @@
     window.setTimeout(() => toast.classList.remove("show"), 2600);
   };
 
-  const currentPath = window.location.pathname.split("/").pop() || "index.html";
+  const getBaseUrl = (content) => {
+    const configured = content.site.baseUrl;
+    if (typeof configured === "string" && configured.trim()) {
+      return configured.replace(/\/$/, "");
+    }
 
-  const renderHeader = () => {
+    return `${window.location.origin}${window.location.pathname.replace(/[^/]*$/, "")}`.replace(/\/$/, "");
+  };
+
+  const toAbsoluteUrl = (content, pathOrUrl) => {
+    if (!pathOrUrl) {
+      return getBaseUrl(content);
+    }
+
+    try {
+      return new URL(pathOrUrl).toString();
+    } catch (_error) {
+      return new URL(pathOrUrl, `${getBaseUrl(content)}/`).toString();
+    }
+  };
+
+  const setMetaTag = (selector, attributes, value) => {
+    let tag = document.head.querySelector(selector);
+    if (!tag) {
+      tag = document.createElement("meta");
+      Object.entries(attributes).forEach(([key, attrValue]) => tag.setAttribute(key, attrValue));
+      document.head.appendChild(tag);
+    }
+    tag.setAttribute("content", value);
+  };
+
+  const setLinkTag = (selector, rel, href) => {
+    let tag = document.head.querySelector(selector);
+    if (!tag) {
+      tag = document.createElement("link");
+      tag.setAttribute("rel", rel);
+      document.head.appendChild(tag);
+    }
+    tag.setAttribute("href", href);
+  };
+
+  const fetchLiveContent = async () => {
+    try {
+      const response = await fetch("/api/content", { headers: { Accept: "application/json" } });
+      if (!response.ok) {
+        throw new Error(`Failed content request: ${response.status}`);
+      }
+      const data = await response.json();
+      if (data && data.site && data.pages) {
+        return data;
+      }
+      return FALLBACK_CONTENT;
+    } catch (_error) {
+      return FALLBACK_CONTENT;
+    }
+  };
+
+  const fetchEventMedia = async () => {
+    try {
+      const response = await fetch("/api/events/media", { headers: { Accept: "application/json" } });
+      if (!response.ok) {
+        return [];
+      }
+      const payload = await response.json();
+      return Array.isArray(payload.files) ? payload.files : [];
+    } catch (_error) {
+      return [];
+    }
+  };
+
+  const renderHeader = (content) => {
     const header = document.getElementById("siteHeader");
     const wrap = create("div", "container nav-wrap");
     const brand = create("a", "brand", content.site.title);
@@ -56,7 +127,7 @@
       const mobileLink = create("a", "", item.label);
       mobileLink.href = item.href;
 
-      if (item.href === currentPath || (item.href === "index.html" && currentPath === "")) {
+      if (item.key === pageKey) {
         desktopLink.classList.add("active");
         mobileLink.classList.add("active");
         desktopLink.setAttribute("aria-current", "page");
@@ -95,7 +166,7 @@
     header.appendChild(mobileNav);
   };
 
-  const renderHero = (main) => {
+  const renderHero = (main, pageData) => {
     const section = create("section", "hero section");
     const container = create("div", "container");
     const copy = create("div", "hero-copy");
@@ -241,7 +312,7 @@
     return section;
   };
 
-  const renderDonate = (cfg) => {
+  const renderDonate = (cfg, content) => {
     const { section, container } = createSectionShell(cfg.title, cfg.intro);
     const card = create("div", "donation-card reveal");
     card.appendChild(create("p", "", cfg.text));
@@ -330,7 +401,7 @@
     return section;
   };
 
-  const renderContact = (cfg) => {
+  const renderContact = (cfg, content) => {
     const section = create("section", "section contact");
     const container = create("div", "container two-col contact-wrap");
 
@@ -392,7 +463,7 @@
     return section;
   };
 
-  const renderNewsletter = (cfg) => {
+  const renderNewsletter = (cfg, content) => {
     const section = create("section", "section");
     const container = create("div", "container newsletter-card reveal");
 
@@ -431,34 +502,96 @@
     return section;
   };
 
-  const sectionRenderers = {
-    cards: renderCards,
-    metrics: renderMetrics,
-    timeline: renderTimeline,
-    list: renderList,
-    progress: renderProgress,
-    donate: renderDonate,
-    quotes: renderQuotes,
-    faq: renderFaq,
-    contact: renderContact,
-    newsletter: renderNewsletter
+  const renderEventMediaGallery = (items) => {
+    if (!Array.isArray(items) || items.length === 0) {
+      return null;
+    }
+
+    const section = create("section", "section");
+    const container = create("div", "container");
+    const head = create("div", "section-head");
+    head.appendChild(create("h2", "", "Event Media"));
+    head.appendChild(create("p", "", "Recent photos and videos uploaded from the admin panel."));
+
+    const grid = create("div", "event-media-grid");
+
+    items.forEach((item) => {
+      const card = create("article", "event-media-item reveal");
+      if (item.type === "video") {
+        const video = create("video");
+        video.controls = true;
+        video.preload = "metadata";
+        video.src = item.url;
+        card.appendChild(video);
+      } else {
+        const image = create("img");
+        image.src = item.url;
+        image.alt = "Event media";
+        image.loading = "lazy";
+        card.appendChild(image);
+      }
+      grid.appendChild(card);
+    });
+
+    container.appendChild(head);
+    container.appendChild(grid);
+    section.appendChild(container);
+    return section;
   };
 
-  const renderMain = () => {
+  const renderMain = (content, pageData, eventMedia) => {
     const main = document.getElementById("pageMain");
-    renderHero(main);
+    renderHero(main, pageData);
 
     const sections = Array.isArray(pageData.sections) ? pageData.sections : [];
 
     sections.forEach((sectionConfig) => {
-      const renderSection = sectionRenderers[sectionConfig.type];
-      if (renderSection) {
-        main.appendChild(renderSection(sectionConfig));
+      let rendered = null;
+      if (sectionConfig.type === "cards") {
+        rendered = renderCards(sectionConfig);
+      }
+      if (sectionConfig.type === "metrics") {
+        rendered = renderMetrics(sectionConfig);
+      }
+      if (sectionConfig.type === "timeline") {
+        rendered = renderTimeline(sectionConfig);
+      }
+      if (sectionConfig.type === "list") {
+        rendered = renderList(sectionConfig);
+      }
+      if (sectionConfig.type === "progress") {
+        rendered = renderProgress(sectionConfig);
+      }
+      if (sectionConfig.type === "donate") {
+        rendered = renderDonate(sectionConfig, content);
+      }
+      if (sectionConfig.type === "quotes") {
+        rendered = renderQuotes(sectionConfig);
+      }
+      if (sectionConfig.type === "faq") {
+        rendered = renderFaq(sectionConfig);
+      }
+      if (sectionConfig.type === "contact") {
+        rendered = renderContact(sectionConfig, content);
+      }
+      if (sectionConfig.type === "newsletter") {
+        rendered = renderNewsletter(sectionConfig, content);
+      }
+
+      if (rendered) {
+        main.appendChild(rendered);
       }
     });
+
+    if (pageKey === "events") {
+      const mediaSection = renderEventMediaGallery(eventMedia);
+      if (mediaSection) {
+        main.appendChild(mediaSection);
+      }
+    }
   };
 
-  const renderFooter = () => {
+  const renderFooter = (content) => {
     const footer = document.getElementById("siteFooter");
     const container = create("div", "container footer-grid");
 
@@ -529,8 +662,15 @@
     elements.forEach((el) => observer.observe(el));
   };
 
-  const applyPageMetadata = () => {
+  const applyPageMetadata = (content, pageData) => {
     const baseTitle = content.site.title || "Rotaract Club";
+    const pageSeo = pageData.seo || {};
+    const description = pageData.intro || "Youth-led service and leadership initiatives with measurable impact.";
+    const keywords = Array.isArray(pageSeo.keywords) ? pageSeo.keywords.join(", ") : "";
+    const slug = pageSeo.slug || currentPath;
+    const canonicalUrl = toAbsoluteUrl(content, slug);
+    const imageUrl = toAbsoluteUrl(content, content.site.defaultImage || "assets/img/social-preview.svg");
+
     if (pageKey === "home") {
       document.title = baseTitle;
     } else {
@@ -538,16 +678,214 @@
     }
 
     const metaDescription = document.querySelector('meta[name="description"]');
-    if (metaDescription && pageData.intro) {
-      metaDescription.setAttribute("content", pageData.intro);
+    if (metaDescription) {
+      metaDescription.setAttribute("content", description);
     }
+
+    if (keywords) {
+      setMetaTag('meta[name="keywords"]', { name: "keywords" }, keywords);
+    }
+
+    setMetaTag('meta[name="robots"]', { name: "robots" }, "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1");
+    setMetaTag('meta[name="author"]', { name: "author" }, baseTitle);
+    setMetaTag('meta[name="geo.region"]', { name: "geo.region" }, content.site.geo?.regionCode || "IN-TN");
+    setMetaTag('meta[name="geo.placename"]', { name: "geo.placename" }, content.site.geo?.city || "Metro City");
+    setMetaTag('meta[name="application-name"]', { name: "application-name" }, baseTitle);
+    setMetaTag('meta[name="apple-mobile-web-app-title"]', { name: "apple-mobile-web-app-title" }, baseTitle);
+
+    setMetaTag('meta[property="og:type"]', { property: "og:type" }, pageKey === "home" ? "website" : "article");
+    setMetaTag('meta[property="og:site_name"]', { property: "og:site_name" }, baseTitle);
+    setMetaTag('meta[property="og:title"]', { property: "og:title" }, document.title);
+    setMetaTag('meta[property="og:description"]', { property: "og:description" }, description);
+    setMetaTag('meta[property="og:url"]', { property: "og:url" }, canonicalUrl);
+    setMetaTag('meta[property="og:image"]', { property: "og:image" }, imageUrl);
+    setMetaTag('meta[property="og:locale"]', { property: "og:locale" }, content.site.locale || "en_IN");
+
+    setMetaTag('meta[name="twitter:card"]', { name: "twitter:card" }, "summary_large_image");
+    setMetaTag('meta[name="twitter:title"]', { name: "twitter:title" }, document.title);
+    setMetaTag('meta[name="twitter:description"]', { name: "twitter:description" }, description);
+    setMetaTag('meta[name="twitter:image"]', { name: "twitter:image" }, imageUrl);
+
+    setMetaTag('meta[name="ai-summary"]', { name: "ai-summary" }, description);
+    if (Array.isArray(pageSeo.quickAnswers) && pageSeo.quickAnswers.length > 0) {
+      setMetaTag('meta[name="ai-key-answers"]', { name: "ai-key-answers" }, pageSeo.quickAnswers.map((item) => `${item.question} ${item.answer}`).join(" | "));
+    }
+
+    setLinkTag('link[rel="canonical"]', "canonical", canonicalUrl);
+
+    const pageName = pageKey === "home" ? "Home" : pageData.title;
+    const breadcrumb = [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: toAbsoluteUrl(content, "index.html")
+      }
+    ];
+
+    if (pageKey !== "home") {
+      breadcrumb.push({
+        "@type": "ListItem",
+        position: 2,
+        name: pageName,
+        item: canonicalUrl
+      });
+    }
+
+    const structuredData = [
+      {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "@id": `${getBaseUrl(content)}/#organization`,
+        name: baseTitle,
+        url: getBaseUrl(content),
+        description: content.site.footerAbout,
+        slogan: content.site.tagline,
+        email: "hello@rotaractmetro.org",
+        telephone: "+91 90000 12345",
+        sameAs: Array.isArray(content.site.sameAs) ? content.site.sameAs : undefined,
+        address: {
+          "@type": "PostalAddress",
+          addressLocality: content.site.geo?.city || "Metro City",
+          addressRegion: content.site.geo?.region || "Tamil Nadu",
+          addressCountry: content.site.geo?.country || "IN"
+        },
+        areaServed: {
+          "@type": "Place",
+          name: `${content.site.geo?.city || "Metro City"}, ${content.site.geo?.region || "Tamil Nadu"}`
+        }
+      },
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "@id": `${getBaseUrl(content)}/#website`,
+        url: getBaseUrl(content),
+        name: baseTitle,
+        description
+      },
+      {
+        "@context": "https://schema.org",
+        "@type": "WebPage",
+        "@id": `${canonicalUrl}#webpage`,
+        url: canonicalUrl,
+        name: document.title,
+        description,
+        inLanguage: "en",
+        isPartOf: { "@id": `${getBaseUrl(content)}/#website` },
+        about: { "@id": `${getBaseUrl(content)}/#organization` }
+      },
+      {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        itemListElement: breadcrumb
+      }
+    ];
+
+    const faqFromStories = pageKey === "stories"
+      ? (Array.isArray(pageData.sections)
+        ? pageData.sections.find((section) => section.type === "faq")
+        : null)
+      : null;
+
+    if (faqFromStories && Array.isArray(faqFromStories.items) && faqFromStories.items.length > 0) {
+      structuredData.push({
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        mainEntity: faqFromStories.items.map((item) => ({
+          "@type": "Question",
+          name: item.question,
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: item.answer
+          }
+        }))
+      });
+    }
+
+    const quickAnswers = Array.isArray(pageSeo.quickAnswers) ? pageSeo.quickAnswers : [];
+    if (quickAnswers.length > 0) {
+      structuredData.push({
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        mainEntity: quickAnswers.map((qa) => ({
+          "@type": "Question",
+          name: qa.question,
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: qa.answer
+          }
+        }))
+      });
+    }
+
+    if (pageKey === "events") {
+      const timeline = Array.isArray(pageData.sections)
+        ? pageData.sections.find((section) => section.type === "timeline")
+        : null;
+
+      if (timeline && Array.isArray(timeline.items) && timeline.items.length > 0) {
+        structuredData.push({
+          "@context": "https://schema.org",
+          "@type": "ItemList",
+          name: "Upcoming Rotaract Events",
+          itemListElement: timeline.items.map((item, index) => {
+            const parsedDate = new Date(item.date);
+            const startDate = Number.isNaN(parsedDate.getTime()) ? undefined : parsedDate.toISOString();
+
+            return {
+              "@type": "ListItem",
+              position: index + 1,
+              item: {
+                "@type": "Event",
+                name: item.title,
+                startDate,
+                eventStatus: "https://schema.org/EventScheduled",
+                eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
+                location: {
+                  "@type": "Place",
+                  name: item.meta,
+                  address: {
+                    "@type": "PostalAddress",
+                    addressLocality: content.site.geo?.city || "Metro City",
+                    addressRegion: content.site.geo?.region || "Tamil Nadu",
+                    addressCountry: content.site.geo?.country || "IN"
+                  }
+                },
+                description: item.text
+              }
+            };
+          })
+        });
+      }
+    }
+
+    let schemaScript = document.getElementById("site-schema-json");
+    if (!schemaScript) {
+      schemaScript = document.createElement("script");
+      schemaScript.id = "site-schema-json";
+      schemaScript.type = "application/ld+json";
+      document.head.appendChild(schemaScript);
+    }
+    schemaScript.textContent = JSON.stringify(structuredData);
   };
 
-  const init = () => {
-    applyPageMetadata();
-    renderHeader();
-    renderMain();
-    renderFooter();
+  const init = async () => {
+    const content = await fetchLiveContent();
+    if (!content || !content.site || !content.pages) {
+      return;
+    }
+
+    const pageData = content.pages[pageKey] || content.pages.home;
+    if (!pageData) {
+      return;
+    }
+
+    const eventMedia = pageKey === "events" ? await fetchEventMedia() : [];
+
+    applyPageMetadata(content, pageData);
+    renderHeader(content);
+    renderMain(content, pageData, eventMedia);
+    renderFooter(content);
     setupBackToTop();
     setupReveal();
   };

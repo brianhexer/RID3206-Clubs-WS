@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: rid3206-clubs-ws
+    runtime: node
+    plan: free
+    rootDir: .
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/auth/session
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: 20.18.0
+      - key: PORT
+        value: 10000
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: ADMIN_USERNAME
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
+    disk:
+      name: events-media
+      mountPath: /opt/render/project/src/assets/uploads/events
+      sizeGB: 1
