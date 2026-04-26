@@ -1089,6 +1089,45 @@
     elements.forEach((el) => observer.observe(el));
   };
 
+  const setupAutoScroll = () => {
+    const scrollContainers = [
+      ".sponsors-scroll",
+      ".members-scroll",
+      ".testimonials-scroll",
+      ".gallery-scroll"
+    ];
+
+    scrollContainers.forEach((selector) => {
+      const container = document.querySelector(selector);
+      if (!container) {
+        return;
+      }
+
+      // Pause on hover
+      container.addEventListener("mouseenter", () => {
+        container.classList.add("paused");
+      });
+
+      // Resume on mouse leave
+      container.addEventListener("mouseleave", () => {
+        container.classList.remove("paused");
+      });
+
+      // Pause on touch
+      container.addEventListener("touchstart", () => {
+        container.classList.add("paused");
+      });
+
+      // Resume after touch
+      container.addEventListener("touchend", () => {
+        // Resume after a delay to avoid immediate resumption
+        setTimeout(() => {
+          container.classList.remove("paused");
+        }, 500);
+      });
+    });
+  };
+
   const applyPageMetadata = (content, pageData) => {
     const baseTitle = content.site.title || "Rotaract Club";
     const pageSeo = pageData.seo || {};
@@ -1315,6 +1354,7 @@
     renderFooter(content);
     setupBackToTop();
     setupReveal();
+    setupAutoScroll();
   };
 
   init();

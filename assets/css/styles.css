@@ -1001,20 +1001,16 @@ img {
   scroll-behavior: smooth;
   scroll-padding: 1rem;
   -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  animation: autoScroll 40s linear infinite;
 }
 
 .sponsors-scroll::-webkit-scrollbar {
-  height: 8px;
+  display: none;
 }
 
-.sponsors-scroll::-webkit-scrollbar-track {
-  background: rgba(21, 53, 47, 0.08);
-  border-radius: 10px;
-}
-
-.sponsors-scroll::-webkit-scrollbar-thumb {
-  background: var(--primary);
-  border-radius: 10px;
+.sponsors-scroll.paused {
+  animation-play-state: paused;
 }
 
 .sponsor-item {
@@ -1168,20 +1164,16 @@ img {
   scroll-behavior: smooth;
   scroll-padding: 1rem;
   -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  animation: autoScroll 50s linear infinite;
 }
 
 .members-scroll::-webkit-scrollbar {
-  height: 8px;
+  display: none;
 }
 
-.members-scroll::-webkit-scrollbar-track {
-  background: rgba(21, 53, 47, 0.08);
-  border-radius: 10px;
-}
-
-.members-scroll::-webkit-scrollbar-thumb {
-  background: var(--primary);
-  border-radius: 10px;
+.members-scroll.paused {
+  animation-play-state: paused;
 }
 
 .member-card {
@@ -1252,20 +1244,16 @@ img {
   scroll-behavior: smooth;
   scroll-padding: 1rem;
   -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  animation: autoScroll 55s linear infinite;
 }
 
 .testimonials-scroll::-webkit-scrollbar {
-  height: 8px;
+  display: none;
 }
 
-.testimonials-scroll::-webkit-scrollbar-track {
-  background: rgba(21, 53, 47, 0.08);
-  border-radius: 10px;
-}
-
-.testimonials-scroll::-webkit-scrollbar-thumb {
-  background: var(--primary);
-  border-radius: 10px;
+.testimonials-scroll.paused {
+  animation-play-state: paused;
 }
 
 .testimonial-card {
@@ -1348,20 +1336,16 @@ img {
   scroll-behavior: smooth;
   scroll-padding: 1rem;
   -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  animation: autoScroll 50s linear infinite;
 }
 
 .gallery-scroll::-webkit-scrollbar {
-  height: 8px;
+  display: none;
 }
 
-.gallery-scroll::-webkit-scrollbar-track {
-  background: rgba(21, 53, 47, 0.08);
-  border-radius: 10px;
-}
-
-.gallery-scroll::-webkit-scrollbar-thumb {
-  background: var(--primary);
-  border-radius: 10px;
+.gallery-scroll.paused {
+  animation-play-state: paused;
 }
 
 .gallery-card {
@@ -1515,6 +1499,16 @@ img {
   }
   to {
     opacity: 1;
+  }
+}
+
+@keyframes autoScroll {
+  0% {
+    scroll-behavior: auto;
+    scroll-left: 0;
+  }
+  100% {
+    scroll-left: 100%;
   }
 }
 
