@@ -16,11 +16,8 @@ window.SITE_CONTENT = {
     sameAs: [],
     nav: [
       { key: "home", label: "Home", href: "#home" },
-      { key: "about", label: "About", href: "#about" },
-      { key: "sponsors", label: "Sponsors", href: "#sponsors" },
       { key: "projects", label: "Projects & Events", href: "#projects" },
       { key: "members", label: "Members", href: "#members" },
-      { key: "testimonials", label: "Testimonials", href: "#testimonials" },
       { key: "gallery", label: "Gallery", href: "#gallery" }
     ],
     footerLinks: [
