@@ -1002,15 +1002,10 @@ img {
   scroll-padding: 1rem;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
-  animation: autoScroll 40s linear infinite;
 }
 
 .sponsors-scroll::-webkit-scrollbar {
   display: none;
-}
-
-.sponsors-scroll.paused {
-  animation-play-state: paused;
 }
 
 .sponsor-item {
@@ -1165,15 +1160,10 @@ img {
   scroll-padding: 1rem;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
-  animation: autoScroll 50s linear infinite;
 }
 
 .members-scroll::-webkit-scrollbar {
   display: none;
-}
-
-.members-scroll.paused {
-  animation-play-state: paused;
 }
 
 .member-card {
@@ -1245,15 +1235,10 @@ img {
   scroll-padding: 1rem;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
-  animation: autoScroll 55s linear infinite;
 }
 
 .testimonials-scroll::-webkit-scrollbar {
   display: none;
-}
-
-.testimonials-scroll.paused {
-  animation-play-state: paused;
 }
 
 .testimonial-card {
@@ -1337,15 +1322,10 @@ img {
   scroll-padding: 1rem;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
-  animation: autoScroll 50s linear infinite;
 }
 
 .gallery-scroll::-webkit-scrollbar {
   display: none;
-}
-
-.gallery-scroll.paused {
-  animation-play-state: paused;
 }
 
 .gallery-card {
@@ -1499,16 +1479,6 @@ img {
   }
   to {
     opacity: 1;
-  }
-}
-
-@keyframes autoScroll {
-  0% {
-    scroll-behavior: auto;
-    scroll-left: 0;
-  }
-  100% {
-    scroll-left: 100%;
   }
 }
 

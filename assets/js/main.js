@@ -1090,39 +1090,61 @@
   };
 
   const setupAutoScroll = () => {
-    const scrollContainers = [
-      ".sponsors-scroll",
-      ".members-scroll",
-      ".testimonials-scroll",
-      ".gallery-scroll"
+    const scrollConfigs = [
+      { selector: ".sponsors-scroll", speed: 1 },
+      { selector: ".members-scroll", speed: 0.8 },
+      { selector: ".testimonials-scroll", speed: 0.7 },
+      { selector: ".gallery-scroll", speed: 0.8 }
     ];
 
-    scrollContainers.forEach((selector) => {
-      const container = document.querySelector(selector);
+    scrollConfigs.forEach((config) => {
+      const container = document.querySelector(config.selector);
       if (!container) {
         return;
       }
 
+      let isScrolling = true;
+      let scrollInterval = null;
+
+      // Start the auto-scroll
+      scrollInterval = setInterval(() => {
+        if (isScrolling) {
+          container.scrollLeft += config.speed;
+
+          // Reset to beginning when reaching the end
+          if (container.scrollLeft >= container.scrollWidth - container.clientWidth - 10) {
+            container.scrollLeft = 0;
+          }
+        }
+      }, 50);
+
+      const stopAutoScroll = () => {
+        isScrolling = false;
+      };
+
+      const startAutoScroll = () => {
+        isScrolling = true;
+      };
+
       // Pause on hover
       container.addEventListener("mouseenter", () => {
-        container.classList.add("paused");
+        stopAutoScroll();
       });
 
       // Resume on mouse leave
       container.addEventListener("mouseleave", () => {
-        container.classList.remove("paused");
+        startAutoScroll();
       });
 
       // Pause on touch
       container.addEventListener("touchstart", () => {
-        container.classList.add("paused");
+        stopAutoScroll();
       });
 
       // Resume after touch
       container.addEventListener("touchend", () => {
-        // Resume after a delay to avoid immediate resumption
         setTimeout(() => {
-          container.classList.remove("paused");
+          startAutoScroll();
         }, 500);
       });
     });
