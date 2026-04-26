@@ -40,6 +40,57 @@
     nextButton.textContent = "❯";
 
     const scrollDistance = () => Math.max(260, Math.round(scroll.clientWidth * stepRatio));
+    const pauseAutoScroll = () => {
+      scroll.dispatchEvent(new CustomEvent("scroll-autoplay-pause", { bubbles: true }));
+    };
+
+    const resumeAutoScroll = () => {
+      scroll.dispatchEvent(new CustomEvent("scroll-autoplay-resume", { bubbles: true }));
+    };
+
+    let dragState = null;
+
+    const stopDrag = () => {
+      if (!dragState) {
+        return;
+      }
+
+      scroll.classList.remove("is-dragging");
+      dragState = null;
+      resumeAutoScroll();
+    };
+
+    scroll.addEventListener("pointerdown", (event) => {
+      if (event.button !== 0) {
+        return;
+      }
+
+      dragState = {
+        startX: event.clientX,
+        startScrollLeft: scroll.scrollLeft,
+        pointerId: event.pointerId
+      };
+
+      scroll.classList.add("is-dragging");
+      pauseAutoScroll();
+
+      if (scroll.setPointerCapture) {
+        scroll.setPointerCapture(event.pointerId);
+      }
+    });
+
+    scroll.addEventListener("pointermove", (event) => {
+      if (!dragState || dragState.pointerId !== event.pointerId) {
+        return;
+      }
+
+      const deltaX = event.clientX - dragState.startX;
+      scroll.scrollLeft = dragState.startScrollLeft - deltaX;
+    });
+
+    scroll.addEventListener("pointerup", stopDrag);
+    scroll.addEventListener("pointercancel", stopDrag);
+    scroll.addEventListener("pointerleave", stopDrag);
 
     const wirePressAndHold = (button, direction) => {
       let holdTimer = null;
@@ -55,10 +106,12 @@
           window.clearInterval(repeatTimer);
           repeatTimer = null;
         }
+        resumeAutoScroll();
       };
 
       const startRepeating = () => {
         stopRepeating();
+        pauseAutoScroll();
         repeatTimer = window.setInterval(() => {
           scroll.scrollLeft += direction * Math.max(18, Math.round(scrollDistance() / 18));
           if (scroll.scrollLeft <= 0) {
@@ -75,6 +128,7 @@
         event.preventDefault();
         pressStartedAt = Date.now();
         stopRepeating();
+        pauseAutoScroll();
         holdTimer = window.setTimeout(startRepeating, 140);
       });
 
@@ -1222,6 +1276,9 @@
       const startAutoScroll = () => {
         isScrolling = true;
       };
+
+      container.addEventListener("scroll-autoplay-pause", stopAutoScroll);
+      container.addEventListener("scroll-autoplay-resume", startAutoScroll);
 
       // Pause on hover
       container.addEventListener("mouseenter", () => {
