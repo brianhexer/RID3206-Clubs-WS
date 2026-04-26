@@ -276,7 +276,27 @@
       });
     }
 
-    container.appendChild(scroll);
+    const scrollWrapper = create("div", "scroll-wrapper");
+    
+    const prevBtn = create("button", "scroll-arrow prev");
+    prevBtn.textContent = "‹";
+    prevBtn.type = "button";
+    prevBtn.addEventListener("click", () => {
+      scroll.scrollBy({ left: -300, behavior: "smooth" });
+    });
+    scrollWrapper.appendChild(prevBtn);
+    
+    scrollWrapper.appendChild(scroll);
+    
+    const nextBtn = create("button", "scroll-arrow next");
+    nextBtn.textContent = "›";
+    nextBtn.type = "button";
+    nextBtn.addEventListener("click", () => {
+      scroll.scrollBy({ left: 300, behavior: "smooth" });
+    });
+    scrollWrapper.appendChild(nextBtn);
+    
+    container.appendChild(scrollWrapper);
     sponsorsSection.appendChild(container);
     main.appendChild(sponsorsSection);
   };
@@ -423,7 +443,27 @@
       });
     }
 
-    container.appendChild(scroll);
+    const scrollWrapper = create("div", "scroll-wrapper");
+    
+    const prevBtn = create("button", "scroll-arrow prev");
+    prevBtn.textContent = "‹";
+    prevBtn.type = "button";
+    prevBtn.addEventListener("click", () => {
+      scroll.scrollBy({ left: -300, behavior: "smooth" });
+    });
+    scrollWrapper.appendChild(prevBtn);
+    
+    scrollWrapper.appendChild(scroll);
+    
+    const nextBtn = create("button", "scroll-arrow next");
+    nextBtn.textContent = "›";
+    nextBtn.type = "button";
+    nextBtn.addEventListener("click", () => {
+      scroll.scrollBy({ left: 300, behavior: "smooth" });
+    });
+    scrollWrapper.appendChild(nextBtn);
+    
+    container.appendChild(scrollWrapper);
     membersSection.appendChild(container);
     main.appendChild(membersSection);
   };
@@ -473,7 +513,27 @@
       });
     }
 
-    container.appendChild(scroll);
+    const scrollWrapper = create("div", "scroll-wrapper");
+    
+    const prevBtn = create("button", "scroll-arrow prev");
+    prevBtn.textContent = "‹";
+    prevBtn.type = "button";
+    prevBtn.addEventListener("click", () => {
+      scroll.scrollBy({ left: -300, behavior: "smooth" });
+    });
+    scrollWrapper.appendChild(prevBtn);
+    
+    scrollWrapper.appendChild(scroll);
+    
+    const nextBtn = create("button", "scroll-arrow next");
+    nextBtn.textContent = "›";
+    nextBtn.type = "button";
+    nextBtn.addEventListener("click", () => {
+      scroll.scrollBy({ left: 300, behavior: "smooth" });
+    });
+    scrollWrapper.appendChild(nextBtn);
+    
+    container.appendChild(scrollWrapper);
     testimonialsSection.appendChild(container);
     main.appendChild(testimonialsSection);
   };
@@ -538,7 +598,27 @@
       });
     }
 
-    container.appendChild(scroll);
+    const scrollWrapper = create("div", "scroll-wrapper");
+    
+    const prevBtn = create("button", "scroll-arrow prev");
+    prevBtn.textContent = "‹";
+    prevBtn.type = "button";
+    prevBtn.addEventListener("click", () => {
+      scroll.scrollBy({ left: -300, behavior: "smooth" });
+    });
+    scrollWrapper.appendChild(prevBtn);
+    
+    scrollWrapper.appendChild(scroll);
+    
+    const nextBtn = create("button", "scroll-arrow next");
+    nextBtn.textContent = "›";
+    nextBtn.type = "button";
+    nextBtn.addEventListener("click", () => {
+      scroll.scrollBy({ left: 300, behavior: "smooth" });
+    });
+    scrollWrapper.appendChild(nextBtn);
+    
+    container.appendChild(scrollWrapper);
     gallerySection.appendChild(container);
     main.appendChild(gallerySection);
   };

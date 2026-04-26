@@ -911,6 +911,54 @@ img {
   font-size: 1.1rem;
   color: var(--ink-soft);
   margin-bottom: 2rem;
+
+.scroll-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.scroll-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(0, 123, 102, 0.9);
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  font-weight: bold;
+  opacity: 0;
+  transition: opacity 0.3s ease, background-color 0.3s ease, transform 0.3s ease;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.scroll-wrapper:hover .scroll-arrow {
+  opacity: 0.8;
+  pointer-events: auto;
+}
+
+.scroll-arrow:hover {
+  opacity: 1 !important;
+  background: var(--primary-strong);
+  transform: translateY(-50%) scale(1.1);
+}
+
+.scroll-arrow.prev {
+  left: 0.5rem;
+}
+
+.scroll-arrow.next {
+  right: 0.5rem;
+}
 }
 
 /* About Section */
@@ -1002,6 +1050,7 @@ img {
   scroll-padding: 1rem;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
+  flex: 1;
 }
 
 .sponsors-scroll::-webkit-scrollbar {
@@ -1156,6 +1205,7 @@ img {
   gap: 1.5rem;
   overflow-x: auto;
   padding: 2rem 0;
+    flex: 1;
   scroll-behavior: smooth;
   scroll-padding: 1rem;
   -webkit-overflow-scrolling: touch;
@@ -1227,6 +1277,7 @@ img {
 }
 
 .testimonials-scroll {
+    flex: 1;
   display: flex;
   gap: 1.5rem;
   overflow-x: auto;
@@ -1314,6 +1365,7 @@ img {
 }
 
 .gallery-scroll {
+    flex: 1;
   display: flex;
   gap: 1.5rem;
   overflow-x: auto;
