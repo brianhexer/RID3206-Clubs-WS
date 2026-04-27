@@ -1776,7 +1776,7 @@ video {
   }
 
   .member-card {
-    flex: 0 0 180px;
+    flex: 0 0 165px;
   }
 
   .testimonial-card {
@@ -1784,11 +1784,31 @@ video {
   }
 
   .gallery-card {
-    flex: 0 0 220px;
+    flex: 0 0 200px;
   }
 
   .member-photo {
-    height: 200px;
+    height: 180px;
+  }
+
+  .project-card img {
+    height: 180px;
+  }
+
+  .project-info {
+    padding: 1rem;
+  }
+
+  .project-card h3 {
+    font-size: 1.1rem;
+  }
+
+  .gallery-image {
+    height: 170px;
+  }
+
+  .gallery-info {
+    padding: 0.95rem;
   }
 
   .scroll-frame .scroll-arrow {
@@ -1814,10 +1834,10 @@ video {
 
 @media (max-width: 900px) {
   .brand-title {
-    max-width: 17ch;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    max-width: min(42ch, calc(100vw - 140px));
+    white-space: normal;
+    line-height: 1.15;
+    font-size: 1.05rem;
   }
 
   .about-container,
@@ -1848,6 +1868,7 @@ video {
 
   .brand {
     gap: 0.5rem;
+    align-items: flex-start;
   }
 
   .brand-logo-wrap {
@@ -1862,8 +1883,47 @@ video {
   }
 
   .brand-title {
-    max-width: 13ch;
+    max-width: calc(100vw - 122px);
+    font-size: 0.95rem;
+    white-space: normal;
+    line-height: 1.12;
+    overflow-wrap: anywhere;
+  }
+
+  .project-card img {
+    height: 165px;
+  }
+
+  .project-info {
+    padding: 0.9rem;
+  }
+
+  .project-card h3 {
     font-size: 1rem;
+  }
+
+  .member-card {
+    flex: 0 0 155px;
+  }
+
+  .member-photo {
+    height: 160px;
+  }
+
+  .member-info {
+    padding: 0.85rem;
+  }
+
+  .gallery-card {
+    flex: 0 0 180px;
+  }
+
+  .gallery-image {
+    height: 145px;
+  }
+
+  .gallery-info {
+    padding: 0.8rem;
   }
 
   .section {
