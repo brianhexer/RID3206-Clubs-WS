@@ -8,7 +8,6 @@
     "impact.html": "impact",
     "programs.html": "programs",
     "events.html": "events",
-    "campaigns.html": "campaigns",
     "stories.html": "stories",
     "contact.html": "contact"
   };
@@ -1017,6 +1016,8 @@
     const { section, container } = createSectionShell(cfg.title, cfg.intro);
     const card = create("div", "donation-card reveal");
     card.appendChild(create("p", "", cfg.text));
+    const currencyFormatter = getCurrencyFormatter(content);
+    const currencyCode = currencyFormatter.resolvedOptions().currency;
 
     const presetWrap = create("div", "donation-presets");
     const amountInput = create("input", "");
@@ -1027,13 +1028,13 @@
 
     const presets = Array.isArray(cfg.presets) ? cfg.presets : [];
 
-    const amountLabel = create("label", "", "Donation amount");
+    const amountLabel = create("label", "", `Donation amount (${currencyCode})`);
     amountLabel.htmlFor = "donationAmount";
     amountInput.id = "donationAmount";
     amountInput.name = "donationAmount";
 
     presets.forEach((amount) => {
-      const button = create("button", "", `$${amount}`);
+      const button = create("button", "", currencyFormatter.format(Number(amount) || 0));
       button.type = "button";
       button.addEventListener("click", () => {
         amountInput.value = String(amount);
@@ -1049,7 +1050,7 @@
         showToast(content.messages.amountRequired);
         return;
       }
-      showToast(`${content.messages.donationReady}: $${amount}`);
+      showToast(`${content.messages.donationReady}: ${currencyFormatter.format(amount)}`);
     });
 
     card.appendChild(presetWrap);

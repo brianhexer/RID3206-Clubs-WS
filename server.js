@@ -41,7 +41,7 @@ const allowedImageMimeTypes = new Set(["image/jpeg", "image/png", "image/gif", "
 const allowedVideoMimeTypes = new Set(["video/mp4", "video/webm", "video/quicktime", "video/ogg", "video/x-m4v"]);
 const allowedUploadMimeTypes = new Set([...allowedImageMimeTypes, ...allowedVideoMimeTypes]);
 const allowedUploadExtensions = new Set([".jpg", ".jpeg", ".png", ".gif", ".webp", ".mp4", ".webm", ".mov", ".m4v", ".ogg"]);
-const allowedSourcePages = new Set(["home", "impact", "programs", "events", "campaigns", "stories", "contact"]);
+const allowedSourcePages = new Set(["home", "impact", "programs", "events", "stories", "contact"]);
 
 app.disable("x-powered-by");
 app.set("trust proxy", 1);

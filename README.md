@@ -4,7 +4,7 @@ Modern NGO-style website for a Rotaract Club with separate menu pages, page-spec
 
 ## What You Get
 
-- Separate page file for each menu item (Home, Impact, Programs, Events, Campaigns, Stories, Contact)
+- Separate page file for each menu item (Home, Impact, Programs, Events, Stories, Contact)
 - JavaScript-rendered page sections powered by a shared content schema
 - Unique page script for each public page under `assets/js/pages/`
 - Responsive design for desktop, tablet, and mobile
@@ -20,7 +20,6 @@ Modern NGO-style website for a Rotaract Club with separate menu pages, page-spec
 ├── impact.html
 ├── programs.html
 ├── events.html
-├── campaigns.html
 ├── stories.html
 ├── contact.html
 ├── assets
@@ -34,7 +33,6 @@ Modern NGO-style website for a Rotaract Club with separate menu pages, page-spec
 │       │   ├── impact.js
 │       │   ├── programs.js
 │       │   ├── events.js
-│       │   ├── campaigns.js
 │       │   ├── stories.js
 │       │   └── contact.js
 │       └── site-content.js

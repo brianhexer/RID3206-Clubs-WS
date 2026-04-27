@@ -19,7 +19,6 @@ window.SITE_CONTENT = {
       { key: "impact", label: "Impact", href: "impact.html" },
       { key: "programs", label: "Programs", href: "programs.html" },
       { key: "events", label: "Events", href: "events.html" },
-      { key: "campaigns", label: "Campaigns", href: "campaigns.html" },
       { key: "stories", label: "Stories", href: "stories.html" },
       { key: "contact", label: "Contact", href: "contact.html" }
     ],
@@ -565,72 +564,6 @@ window.SITE_CONTENT = {
               question: "Can event media be added after an event?",
               answer: "Yes. The admin panel supports media uploads, and the gallery updates automatically on this page."
             }
-          ]
-        }
-      ]
-    },
-    campaigns: {
-      title: "Campaigns",
-      intro: "Fundraising and donation campaigns with clear goals, progress tracking, and impact updates.",
-      seo: {
-        slug: "campaigns.html",
-        keywords: ["Rotaract campaigns", "fundraising", "donations", "service projects"],
-        quickAnswers: [
-          {
-            question: "Where do campaign funds go?",
-            answer: "Funds are used for direct program delivery, logistics, materials, and verified partner costs."
-          },
-          {
-            question: "Can I support a campaign without donating?",
-            answer: "Yes. Promotion, volunteering, and partner introductions are all useful ways to help."
-          }
-        ]
-      },
-      sections: [
-        {
-          type: "progress",
-          id: "campaign-progress",
-          title: "Current Campaigns",
-          intro: "Live goals and the current funding status for active drives.",
-          items: [
-            {
-              title: "School Kits for Students",
-              text: "Distribute notebooks, bags, and learning supplies to children in underserved neighborhoods.",
-              raised: 78000,
-              goal: 120000
-            },
-            {
-              title: "Community Health Support",
-              text: "Sponsor medicines, screening kits, and transport support for low-income patients.",
-              raised: 54000,
-              goal: 100000
-            },
-            {
-              title: "Climate Action Fund",
-              text: "Cover native tree planting, cleanup logistics, and sustainability awareness materials.",
-              raised: 26000,
-              goal: 75000
-            }
-          ]
-        },
-        {
-          type: "donate",
-          id: "campaign-donate",
-          title: "Support a Campaign",
-          intro: "A simple way to test donation flow and show preset amounts.",
-          text: "Choose a preset amount or enter a custom value to simulate support for active campaigns.",
-          presets: [500, 1000, 2500, 5000]
-        },
-        {
-          type: "list",
-          id: "campaign-use",
-          title: "How Contributions Are Used",
-          intro: "A transparent breakdown of the typical spend mix.",
-          items: [
-            "Direct beneficiary support and supplies.",
-            "Event logistics, transport, and venue coordination.",
-            "Partnership materials and awareness campaigns.",
-            "Follow-up visits and post-event reporting."
           ]
         }
       ]
