@@ -712,7 +712,7 @@ window.SITE_CONTENT = {
     },
     contact: {
       title: "Contact",
-      intro: "Reach the club team for partnerships, volunteer opportunities, media, and general inquiries.",
+      intro: "Reach the club team for partnerships, volunteer opportunities, media requests, and general enquiries.",
       seo: {
         slug: "contact.html",
         keywords: ["Rotaract contact", "club contact", "volunteer inquiry", "partnerships"]
@@ -729,18 +729,18 @@ window.SITE_CONTENT = {
             { label: "Hours", value: "Mon-Fri, 10:00 AM to 6:00 PM" }
           ],
           form: {
-            title: "Send a Message",
-            nameLabel: "Your Name",
+            title: "Send a Direct Enquiry",
+            nameLabel: "Full Name",
             emailLabel: "Email Address",
-            messageLabel: "Message",
-            submitLabel: "Submit Inquiry"
+            messageLabel: "How can we help?",
+            submitLabel: "Send Message"
           }
         },
         {
           type: "newsletter",
           id: "contact-newsletter",
           title: "Stay in the Loop",
-          text: "Join the mailing list for the monthly brief, event calendar, and volunteer requests.",
+          text: "Join the mailing list for monthly updates, event announcements, and volunteer opportunities.",
           submitLabel: "Subscribe"
         }
       ]

@@ -1276,13 +1276,13 @@
 
     const copy = create("div", "footer-contact-copy");
     copy.appendChild(create("p", "kicker", "Get In Touch"));
-    copy.appendChild(create("h2", "", "Send a message before the footer"));
-    copy.appendChild(create("p", "footer-contact-text", "Use this form for membership interest, collaboration requests, event questions, or custom queries. We will route your message to the right team."));
+    copy.appendChild(create("h2", "", "Connect with the club team"));
+    copy.appendChild(create("p", "footer-contact-text", "Share partnership ideas, volunteer interest, media requests, or event-related questions. We will route your enquiry to the right coordinator and respond promptly."));
 
     const form = create("form", "footer-contact-form");
     form.setAttribute("aria-label", "Footer contact form");
 
-    const nameLabel = create("label", "", "Name");
+    const nameLabel = create("label", "", "Full name");
     nameLabel.htmlFor = "footerContactName";
     const nameInput = create("input");
     nameInput.id = "footerContactName";
@@ -1309,17 +1309,17 @@
     emailInput.required = true;
 
     const reasonGroup = create("fieldset", "reason-group");
-    const reasonLegend = create("legend", "", "Reason");
+    const reasonLegend = create("legend", "", "Reason for enquiry");
     reasonGroup.appendChild(reasonLegend);
 
     const reasonWrap = create("div", "reason-options");
     [
-      "Interested to join the club",
-      "Collaboration Request",
-      "Event Participation",
-      "Sponsorship Opportunity",
-      "Media / Press Inquiry",
-      "Volunteer Support"
+      "Membership enquiry",
+      "Partnership proposal",
+      "Event participation",
+      "Sponsorship opportunity",
+      "Media / press request",
+      "Volunteer support"
     ].forEach((reason, index) => {
       const option = create("label", "reason-option");
       const checkbox = create("input");
@@ -1334,15 +1334,15 @@
     });
     reasonGroup.appendChild(reasonWrap);
 
-    const customLabel = create("label", "", "Custom queries");
+    const customLabel = create("label", "", "Tell us more about your enquiry");
     customLabel.htmlFor = "footerContactCustom";
     const customInput = create("textarea");
     customInput.id = "footerContactCustom";
     customInput.name = "customQuery";
     customInput.rows = 4;
-    customInput.placeholder = "Tell us more about your request";
+    customInput.placeholder = "Share details, timelines, or any specific request";
 
-    const submit = create("button", "btn btn-solid footer-contact-submit", "Submit");
+    const submit = create("button", "btn btn-solid footer-contact-submit", "Send enquiry");
     submit.type = "submit";
 
     const status = create("p", "admin-message footer-contact-message");
@@ -1377,7 +1377,7 @@
       };
 
       if (!payload.name || !payload.phone || !payload.email || selectedReasons.length === 0) {
-        status.textContent = "Please complete the required fields and choose at least one reason.";
+        status.textContent = "Please complete the required fields and select at least one enquiry type.";
         status.classList.add("error");
         return;
       }
@@ -1397,7 +1397,7 @@
         }
 
         form.reset();
-        status.textContent = "Your message has been submitted successfully.";
+        status.textContent = "Your enquiry has been submitted successfully.";
         status.classList.add("success");
         showToast(content.messages.contactSuccess || "Thanks for reaching out.");
       } catch (_error) {
