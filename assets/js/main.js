@@ -305,13 +305,15 @@
     const brand = create("a", "brand", content.site.title);
     brand.href = "index.html";
 
+    const logoWrap = create("span", "brand-logo-wrap");
     const logo = create("img", "brand-logo");
     logo.src = content.site.logo;
     logo.alt = "Rotaract Club of 3206 logo";
-    logo.width = 40;
-    logo.height = 40;
+    logo.width = 52;
+    logo.height = 52;
     brand.textContent = "";
-    brand.appendChild(logo);
+    logoWrap.appendChild(logo);
+    brand.appendChild(logoWrap);
     brand.appendChild(create("span", "brand-title", content.site.title));
 
     const desktopNav = create("nav", "desktop-nav");
@@ -368,6 +370,13 @@
   };
 
   const renderHero = (main, pageData) => {
+    const hasHeroContent = [pageData.title, pageData.subtitle, pageData.tagline].some(
+      (value) => typeof value === "string" && value.trim().length > 0
+    );
+    if (!hasHeroContent) {
+      return;
+    }
+
     const section = create("section", "hero-section");
     section.id = "hero";
     const container = create("div", "container");
@@ -1276,8 +1285,8 @@
 
     const copy = create("div", "footer-contact-copy");
     copy.appendChild(create("p", "kicker", "Get In Touch"));
-    copy.appendChild(create("h2", "", "Connect with the club team"));
-    copy.appendChild(create("p", "footer-contact-text", "Share partnership ideas, volunteer interest, media requests, or event-related questions. We will route your enquiry to the right coordinator and respond promptly."));
+    copy.appendChild(create("h2", "", "Let us create impact together"));
+    copy.appendChild(create("p", "footer-contact-text", "Have a project idea, partnership proposal, media query, or volunteering interest? Send us a note and our team will get back to you with the right next steps."));
 
     const form = create("form", "footer-contact-form");
     form.setAttribute("aria-label", "Footer contact form");

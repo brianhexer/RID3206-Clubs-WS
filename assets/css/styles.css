@@ -12,6 +12,7 @@
   --radius-md: 18px;
   --radius-sm: 12px;
   --container: 1200px;
+  --gutter: clamp(0.9rem, 2.2vw, 1.6rem);
 }
 
 * {
@@ -32,6 +33,7 @@ body {
     radial-gradient(circle at 60% 78%, rgba(37, 22, 42, 0.04) 0%, transparent 28%),
     var(--bg);
   line-height: 1.55;
+  overflow-x: clip;
 }
 
 h1,
@@ -42,6 +44,7 @@ h4 {
   margin: 0;
   line-height: 1.1;
   letter-spacing: 0.2px;
+  overflow-wrap: anywhere;
 }
 
 a {
@@ -52,10 +55,17 @@ a {
 img {
   display: block;
   width: 100%;
+  max-width: 100%;
+  height: auto;
+}
+
+video {
+  display: block;
+  max-width: 100%;
 }
 
 .container {
-  width: min(var(--container), 89vw);
+  width: min(var(--container), calc(100vw - (var(--gutter) * 2)));
   margin: 0 auto;
 }
 
@@ -69,7 +79,7 @@ img {
 }
 
 .section {
-  padding: 3.5rem 0;
+  padding: clamp(2.25rem, 6vw, 3.5rem) 0;
 }
 
 .section-head {
@@ -128,13 +138,24 @@ img {
   color: var(--primary-strong);
 }
 
-.brand-logo {
-  width: 40px;
-  height: 40px;
-  flex: 0 0 40px;
+.brand-logo-wrap {
+  width: 52px;
+  height: 52px;
+  flex: 0 0 52px;
   border-radius: 999px;
-  object-fit: cover;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(161, 15, 80, 0.14);
   box-shadow: 0 8px 18px rgba(161, 15, 80, 0.15);
+}
+
+.brand-logo {
+  width: 52px;
+  height: 52px;
+  object-fit: none;
+  object-position: center 72%;
+  transform: scale(3.2);
+  transform-origin: center;
 }
 
 .brand-title {
@@ -326,7 +347,7 @@ img {
 }
 
 .impact-grid {
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
 }
 
 .impact-card {
@@ -343,7 +364,7 @@ img {
 }
 
 .card-grid {
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
 }
 
 .program-card {
@@ -436,7 +457,7 @@ img {
 }
 
 .campaign-list {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
 }
 
 .campaign-card {
@@ -542,7 +563,7 @@ img {
 }
 
 .gallery-grid {
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
 }
 
 .gallery-item {
@@ -632,13 +653,13 @@ img {
 
 .newsletter-form {
   display: grid;
-  grid-template-columns: minmax(220px, 360px) auto;
+  grid-template-columns: minmax(180px, 360px) auto;
   gap: 0.65rem;
 }
 
 .event-media-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 1rem;
 }
 
@@ -1214,7 +1235,7 @@ img {
 }
 
 .sponsor-item {
-  flex: 0 0 180px;
+  flex: 0 0 clamp(145px, 24vw, 180px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1273,7 +1294,7 @@ img {
 
 .projects-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 1.25rem;
   margin-top: 2rem;
 }
@@ -1373,7 +1394,7 @@ img {
 }
 
 .member-card {
-  flex: 0 0 240px;
+  flex: 0 0 clamp(190px, 28vw, 240px);
   background: white;
   border-radius: var(--radius-lg);
   overflow: hidden;
@@ -1448,7 +1469,7 @@ img {
 }
 
 .testimonial-card {
-  flex: 0 0 320px;
+  flex: 0 0 clamp(240px, 42vw, 320px);
   background: white;
   border-radius: var(--radius-lg);
   border: 1px solid var(--border);
@@ -1535,7 +1556,7 @@ img {
 }
 
 .gallery-card {
-  flex: 0 0 280px;
+  flex: 0 0 clamp(210px, 36vw, 280px);
   background: white;
   border-radius: var(--radius-lg);
   overflow: hidden;
@@ -1788,5 +1809,94 @@ img {
   .scroll-frame .testimonials-scroll,
   .scroll-frame .gallery-scroll {
     padding-inline: 3rem;
+  }
+}
+
+@media (max-width: 900px) {
+  .brand-title {
+    max-width: 17ch;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .about-container,
+  .newsletter-card,
+  .footer-grid,
+  .footer-contact-grid,
+  .two-col {
+    grid-template-columns: 1fr;
+  }
+
+  .newsletter-form {
+    grid-template-columns: 1fr;
+  }
+
+  .reason-options {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .container {
+    width: min(var(--container), calc(100vw - 1.25rem));
+  }
+
+  .nav-wrap {
+    min-height: 64px;
+  }
+
+  .brand {
+    gap: 0.5rem;
+  }
+
+  .brand-logo-wrap {
+    width: 42px;
+    height: 42px;
+    flex-basis: 42px;
+  }
+
+  .brand-logo {
+    width: 42px;
+    height: 42px;
+  }
+
+  .brand-title {
+    max-width: 13ch;
+    font-size: 1rem;
+  }
+
+  .section {
+    padding: 2rem 0;
+  }
+
+  .hero,
+  .hero-section {
+    padding-top: 3.6rem;
+  }
+
+  .footer-contact-form,
+  .footer-contact-copy,
+  .contact-form,
+  .aside-card,
+  .admin-card {
+    padding: 1rem;
+  }
+
+  .scroll-frame .sponsors-scroll,
+  .scroll-frame .members-scroll,
+  .scroll-frame .testimonials-scroll,
+  .scroll-frame .gallery-scroll {
+    padding-inline: 2.4rem;
+  }
+}
+
+@media (min-width: 1500px) {
+  :root {
+    --container: 1320px;
+  }
+
+  .hero-section h1 {
+    font-size: clamp(2.8rem, 4vw, 4.5rem);
   }
 }
