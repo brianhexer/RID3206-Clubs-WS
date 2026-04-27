@@ -11,10 +11,14 @@ services:
     envVars:
       - key: NODE_VERSION
         value: 20.18.0
+      - key: NODE_ENV
+        value: production
       - key: PORT
         value: 10000
       - key: SESSION_SECRET
         generateValue: true
+      - key: ALLOWED_ORIGIN
+        sync: false
       - key: ADMIN_USERNAME
         sync: false
       - key: ADMIN_PASSWORD

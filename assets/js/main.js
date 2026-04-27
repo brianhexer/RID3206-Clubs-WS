@@ -248,6 +248,68 @@
     return "";
   };
 
+  const getCurrencyFromCountry = (countryCode) => {
+    const map = {
+      IN: "INR",
+      US: "USD",
+      GB: "GBP",
+      CA: "CAD",
+      AU: "AUD",
+      NZ: "NZD",
+      SG: "SGD",
+      AE: "AED",
+      SA: "SAR",
+      QA: "QAR",
+      KW: "KWD",
+      OM: "OMR",
+      BH: "BHD",
+      MY: "MYR",
+      TH: "THB",
+      ID: "IDR",
+      PH: "PHP",
+      JP: "JPY",
+      KR: "KRW",
+      CN: "CNY",
+      HK: "HKD",
+      EU: "EUR",
+      DE: "EUR",
+      FR: "EUR",
+      IT: "EUR",
+      ES: "EUR",
+      NL: "EUR",
+      BE: "EUR",
+      IE: "EUR",
+      PT: "EUR",
+      AT: "EUR",
+      FI: "EUR",
+      GR: "EUR",
+      BR: "BRL",
+      MX: "MXN",
+      ZA: "ZAR"
+    };
+    return map[String(countryCode || "").toUpperCase()] || "USD";
+  };
+
+  const getCurrencyFormatter = (content) => {
+    const locale = String(content?.site?.locale || "en-IN").replace("_", "-");
+    const country = String(content?.site?.geo?.country || "IN").toUpperCase();
+    const currency = getCurrencyFromCountry(country);
+
+    try {
+      return new Intl.NumberFormat(locale, {
+        style: "currency",
+        currency,
+        maximumFractionDigits: 0
+      });
+    } catch (_error) {
+      return new Intl.NumberFormat("en-IN", {
+        style: "currency",
+        currency: "INR",
+        maximumFractionDigits: 0
+      });
+    }
+  };
+
   const setMetaTag = (selector, attributes, value) => {
     let tag = document.head.querySelector(selector);
     if (!tag) {
@@ -921,9 +983,10 @@
     return section;
   };
 
-  const renderProgress = (cfg) => {
+  const renderProgress = (cfg, content) => {
     const { section, container } = createSectionShell(cfg.title, cfg.intro);
     const list = create("div", "campaign-list");
+    const currencyFormatter = getCurrencyFormatter(content);
 
     const items = Array.isArray(cfg.items) ? cfg.items : [];
 
@@ -934,7 +997,7 @@
       const card = create("article", "campaign-card reveal");
       card.appendChild(create("h3", "", item.title));
       card.appendChild(create("p", "", item.text));
-      card.appendChild(create("p", "campaign-meta", `Raised $${safeRaised.toLocaleString("en-IN")} of $${safeGoal.toLocaleString("en-IN")}`));
+      card.appendChild(create("p", "campaign-meta", `Raised ${currencyFormatter.format(safeRaised)} of ${currencyFormatter.format(safeGoal)}`));
 
       const track = create("div", "progress-track");
       const fill = create("span", "progress-fill");
@@ -1210,7 +1273,7 @@
         const rendered = renderList(sectionConfig);
         if (rendered) main.appendChild(rendered);
       } else if (sectionConfig.type === "progress") {
-        const rendered = renderProgress(sectionConfig);
+        const rendered = renderProgress(sectionConfig, content);
         if (rendered) main.appendChild(rendered);
       } else if (sectionConfig.type === "donate") {
         const rendered = renderDonate(sectionConfig, content);
