@@ -305,6 +305,15 @@
     const brand = create("a", "brand", content.site.title);
     brand.href = "index.html";
 
+    const logo = create("img", "brand-logo");
+    logo.src = content.site.logo;
+    logo.alt = "Rotaract Club of 3206 logo";
+    logo.width = 40;
+    logo.height = 40;
+    brand.textContent = "";
+    brand.appendChild(logo);
+    brand.appendChild(create("span", "brand-title", content.site.title));
+
     const desktopNav = create("nav", "desktop-nav");
     desktopNav.setAttribute("aria-label", "Primary");
 

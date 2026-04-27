@@ -2,7 +2,7 @@ window.SITE_CONTENT = {
   site: {
     title: "Rotaract Club of 3206",
     tagline: "People of Action",
-    logo: "🎯",
+    logo: "assets/img/favicon_io_logo/android-chrome-192x192.png",
     baseUrl: "https://brianhexer.github.io/RID3206-Clubs-WS",
     apiBaseUrl: "",
     locale: "en_IN",
