@@ -15,6 +15,7 @@ const PORT = Number(process.env.PORT) || 3000;
 const ROOT = __dirname;
 const SITE_CONTENT_PATH = path.join(ROOT, "assets", "js", "site-content.js");
 const EVENT_UPLOAD_DIR = path.join(ROOT, "assets", "uploads", "events");
+const CONTACT_SUBMISSIONS_PATH = path.join(ROOT, ".data", "contact-submissions.jsonl");
 const isProduction = process.env.NODE_ENV === "production";
 const allowedOrigins = String(process.env.ALLOWED_ORIGIN || "")
   .split(",")
@@ -90,6 +91,11 @@ const listUploadedMedia = async () => {
       };
     })
     .sort((a, b) => a.filename.localeCompare(b.filename));
+};
+
+const saveContactSubmission = async (submission) => {
+  await ensureDirectory(path.dirname(CONTACT_SUBMISSIONS_PATH));
+  await fsp.appendFile(CONTACT_SUBMISSIONS_PATH, `${JSON.stringify(submission)}\n`, "utf8");
 };
 
 const requireAuth = (req, res, next) => {
@@ -229,12 +235,46 @@ app.post("/api/events/media", requireAuth, upload.array("files", 20), async (_re
   }
 });
 
+app.post("/api/contact", async (req, res) => {
+  try {
+    const name = String(req.body?.name || "").trim();
+    const phone = String(req.body?.phone || "").trim();
+    const email = String(req.body?.email || "").trim();
+    const reasons = Array.isArray(req.body?.reasons)
+      ? req.body.reasons.map((reason) => String(reason || "").trim()).filter(Boolean)
+      : [];
+    const customQuery = String(req.body?.customQuery || "").trim();
+    const sourcePage = String(req.body?.sourcePage || "").trim();
+
+    if (!name || !phone || !email || reasons.length === 0) {
+      res.status(400).json({ message: "Please complete all required contact fields" });
+      return;
+    }
+
+    await saveContactSubmission({
+      name,
+      phone,
+      email,
+      reasons,
+      customQuery,
+      sourcePage,
+      createdAt: new Date().toISOString(),
+      userAgent: String(req.get("user-agent") || "")
+    });
+
+    res.json({ ok: true });
+  } catch (error) {
+    res.status(500).json({ message: error.message || "Unable to save contact submission" });
+  }
+});
+
 app.use((error, _req, res, _next) => {
   res.status(400).json({ message: error.message || "Request error" });
 });
 
 app.listen(PORT, async () => {
   await ensureDirectory(EVENT_UPLOAD_DIR);
+  await ensureDirectory(path.dirname(CONTACT_SUBMISSIONS_PATH));
   if (!fs.existsSync(SITE_CONTENT_PATH)) {
     console.error("Missing site content file at assets/js/site-content.js");
   }

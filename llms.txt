@@ -1,9 +1,9 @@
-# Rotaract Club of Metro City
+# Rotaract Club of 3206
 
 > Primary site for programs, events, campaigns, impact metrics, stories, and contact details.
 
 ## Site
-- Name: Rotaract Club of Metro City
+- Name: Rotaract Club of 3206
 - Tagline: People of Action
 - Canonical base URL: https://brianhexer.github.io/RID3206-Clubs-WS/
 - Organization type: Youth-led community service organization

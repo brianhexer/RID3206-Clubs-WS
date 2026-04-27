@@ -1,6 +1,6 @@
 window.SITE_CONTENT = {
   site: {
-    title: "Rotaract Club of Metro City",
+    title: "Rotaract Club of 3206",
     tagline: "People of Action",
     logo: "🎯",
     baseUrl: "https://brianhexer.github.io/RID3206-Clubs-WS",
@@ -15,15 +15,19 @@ window.SITE_CONTENT = {
     },
     sameAs: [],
     nav: [
-      { key: "home", label: "Home", href: "#home" },
-      { key: "projects", label: "Projects & Events", href: "#projects" },
-      { key: "members", label: "Members", href: "#members" },
-      { key: "gallery", label: "Gallery", href: "#gallery" }
+      { key: "home", label: "Home", href: "index.html" },
+      { key: "impact", label: "Impact", href: "impact.html" },
+      { key: "programs", label: "Programs", href: "programs.html" },
+      { key: "events", label: "Events", href: "events.html" },
+      { key: "campaigns", label: "Campaigns", href: "campaigns.html" },
+      { key: "stories", label: "Stories", href: "stories.html" },
+      { key: "contact", label: "Contact", href: "contact.html" }
     ],
     footerLinks: [
-      { label: "About", href: "#about" },
-      { label: "Projects", href: "#projects" },
-      { label: "Contact", href: "#contact" }
+      { label: "Home", href: "index.html" },
+      { label: "Impact", href: "impact.html" },
+      { label: "Programs", href: "programs.html" },
+      { label: "Contact", href: "contact.html" }
     ],
     legalLinks: [
       { label: "Privacy", href: "#" },
@@ -31,7 +35,7 @@ window.SITE_CONTENT = {
       { label: "Code of Conduct", href: "#" }
     ],
     footerAbout:
-      "Rotaract Club of Metro City is a youth-led service organization building measurable social impact through local action and partnerships."
+      "Rotaract Club of 3206 is a youth-led service organization building measurable social impact through local action and partnerships."
   },
   messages: {
     contactSuccess: "Thanks for contacting us. Our team will respond soon.",
@@ -41,11 +45,16 @@ window.SITE_CONTENT = {
   },
   pages: {
     home: {
+      intro: "Youth-led service and leadership initiatives with measurable community impact.",
+      seo: {
+        slug: "index.html",
+        keywords: ["Rotaract", "service", "leadership", "community impact", "Metro City"]
+      },
       sections: [
         {
           type: "hero",
           id: "hero",
-          title: "Rotaract Club of Metro City",
+          title: "Rotaract Club of 3206",
           subtitle: "People of Action",
           tagline: "Building community impact through youth leadership and service"
         },
@@ -54,7 +63,7 @@ window.SITE_CONTENT = {
           id: "about",
           title: "About Our Club",
           backgroundImage: "assets/img/common/01.jpg",
-          content: "Rotaract Club of Metro City is a youth-led service organization dedicated to creating measurable community impact. We empower young leaders to identify local needs and execute high-impact projects in partnership with communities, businesses, and civic organizations. Our focus areas include health, education, environment, and women's empowerment. Through service, leadership development, and meaningful friendships, we build a better world together.",
+          content: "Rotaract Club of 3206 is a youth-led service organization dedicated to creating measurable community impact. We empower young leaders to identify local needs and execute high-impact projects in partnership with communities, businesses, and civic organizations. Our focus areas include health, education, environment, and women's empowerment. Through service, leadership development, and meaningful friendships, we build a better world together.",
           highlights: [
             { label: "Members", value: "150+" },
             { label: "Projects Completed", value: "84" },
@@ -355,6 +364,384 @@ window.SITE_CONTENT = {
               description: "Volunteers distributing resources in underserved areas"
             }
           ]
+        }
+      ]
+    },
+    impact: {
+      title: "Impact",
+      intro: "A clear view of the outcomes we measure, the partnerships we build, and the communities we serve.",
+      seo: {
+        slug: "impact.html",
+        keywords: ["Rotaract impact", "community outcomes", "volunteer hours", "service projects"],
+        quickAnswers: [
+          {
+            question: "How does the club measure impact?",
+            answer: "We track volunteer hours, lives reached, project completion, and partner feedback across every initiative."
+          },
+          {
+            question: "What areas does the club prioritize?",
+            answer: "Health, education, environment, and community empowerment are the main focus areas."
+          }
+        ]
+      },
+      sections: [
+        {
+          type: "metrics",
+          id: "impact-metrics",
+          title: "Impact at a Glance",
+          intro: "Recent results from the club's service program.",
+          items: [
+            { value: "26,400+", label: "People reached" },
+            { value: "9,100+", label: "Volunteer hours" },
+            { value: "84", label: "Projects completed" },
+            { value: "14", label: "Active partners" }
+          ]
+        },
+        {
+          type: "timeline",
+          id: "impact-timeline",
+          title: "Impact Milestones",
+          intro: "A few of the moments that shaped the club's service strategy.",
+          items: [
+            {
+              date: "April 2026",
+              title: "Community Health Week",
+              meta: "Metro District",
+              text: "Expanded screenings and awareness drives with local doctors, schools, and volunteer nurses."
+            },
+            {
+              date: "March 2026",
+              title: "Education Access Drive",
+              meta: "Community Learning Center",
+              text: "Delivered digital literacy support, stationery kits, and mentoring for first-generation learners."
+            },
+            {
+              date: "January 2026",
+              title: "Environmental Action Sprint",
+              meta: "River Corridor",
+              text: "Coordinated cleanup and plantation work with residents, schools, and civic groups."
+            }
+          ]
+        },
+        {
+          type: "quotes",
+          id: "impact-quotes",
+          title: "What Partners Say",
+          intro: "Feedback from organizations that work with the club.",
+          items: [
+            {
+              text: "The club runs projects with the kind of discipline and follow-through that turns volunteer effort into measurable results.",
+              name: "Dr. Naveen Kumar",
+              role: "Hospital Partner"
+            },
+            {
+              text: "Their programs are practical, inclusive, and well-managed from start to finish.",
+              name: "Mrs. Priya Patel",
+              role: "NGO Director"
+            },
+            {
+              text: "Every collaboration feels organized, transparent, and genuinely community-first.",
+              name: "Arjun Mehta",
+              role: "Corporate Partner"
+            }
+          ]
+        }
+      ]
+    },
+    programs: {
+      title: "Programs",
+      intro: "The service tracks and learning programs that keep the club active throughout the year.",
+      seo: {
+        slug: "programs.html",
+        keywords: ["Rotaract programs", "leadership development", "service learning", "youth volunteering"]
+      },
+      sections: [
+        {
+          type: "cards",
+          id: "program-tracks",
+          title: "Program Tracks",
+          intro: "The formats we repeat and refine across the year.",
+          items: [
+            {
+              title: "Community Health",
+              text: "Blood donation drives, screenings, hygiene awareness, and wellness outreach built around local needs.",
+              tags: ["Health", "Outreach", "Partnerships"]
+            },
+            {
+              title: "Education Support",
+              text: "Mentoring, digital literacy, school support, and career guidance for students and young adults.",
+              tags: ["Mentorship", "Learning", "Youth"]
+            },
+            {
+              title: "Environment Action",
+              text: "Cleanup work, plantation drives, and sustainability campaigns that engage members and residents.",
+              tags: ["Green", "Community", "Action"]
+            },
+            {
+              title: "Women Empowerment",
+              text: "Skills training, entrepreneurship support, and economic empowerment initiatives for women.",
+              tags: ["Skills", "Livelihoods", "Growth"]
+            }
+          ]
+        },
+        {
+          type: "list",
+          id: "program-principles",
+          title: "How Programs Are Run",
+          intro: "Simple operating rules that keep projects focused.",
+          items: [
+            "Each program has a measurable goal and a named lead.",
+            "Partners are confirmed before public announcements.",
+            "Every activity ends with a short impact review and follow-up plan.",
+            "Volunteer roles are matched to skills, not just availability."
+          ]
+        },
+        {
+          type: "newsletter",
+          id: "program-updates",
+          title: "Get Program Updates",
+          text: "Subscribe to receive the latest service calendar and volunteering opportunities.",
+          submitLabel: "Join Updates"
+        }
+      ]
+    },
+    events: {
+      title: "Events",
+      intro: "Upcoming activities and recent event highlights with live media uploaded by the admin team.",
+      seo: {
+        slug: "events.html",
+        keywords: ["Rotaract events", "community events", "volunteer calendar", "club activities"]
+      },
+      sections: [
+        {
+          type: "timeline",
+          id: "events-calendar",
+          title: "Upcoming Events",
+          intro: "The next few public activities on the club calendar.",
+          items: [
+            {
+              date: "May 15, 2026",
+              title: "Blood Donation Drive",
+              meta: "City Civic Auditorium",
+              text: "A district-wide donor mobilization drive in partnership with hospitals and youth groups."
+            },
+            {
+              date: "May 22, 2026",
+              title: "Health Screening Camp",
+              meta: "Metro Government School",
+              text: "Free screenings, awareness talks, and referrals for students and families."
+            },
+            {
+              date: "May 29, 2026",
+              title: "Career Guidance Workshop",
+              meta: "Youth Center, Downtown",
+              text: "Mentoring, interview preparation, and practical career planning for students."
+            }
+          ]
+        },
+        {
+          type: "metrics",
+          id: "events-stats",
+          title: "Event Performance",
+          intro: "A quick snapshot of the club's event footprint.",
+          items: [
+            { value: "36", label: "Events hosted last year" },
+            { value: "4,800+", label: "Participants reached" },
+            { value: "1,200+", label: "Media assets uploaded" },
+            { value: "92%", label: "Average follow-up completion" }
+          ]
+        },
+        {
+          type: "faq",
+          id: "events-faq",
+          title: "Event Questions",
+          intro: "Answers for volunteers, partners, and attendees.",
+          items: [
+            {
+              question: "How do I volunteer for an event?",
+              answer: "Use the contact page to request the latest volunteer list or ask the team during an active campaign."
+            },
+            {
+              question: "Can event media be added after an event?",
+              answer: "Yes. The admin panel supports media uploads, and the gallery updates automatically on this page."
+            }
+          ]
+        }
+      ]
+    },
+    campaigns: {
+      title: "Campaigns",
+      intro: "Fundraising and donation campaigns with clear goals, progress tracking, and impact updates.",
+      seo: {
+        slug: "campaigns.html",
+        keywords: ["Rotaract campaigns", "fundraising", "donations", "service projects"],
+        quickAnswers: [
+          {
+            question: "Where do campaign funds go?",
+            answer: "Funds are used for direct program delivery, logistics, materials, and verified partner costs."
+          },
+          {
+            question: "Can I support a campaign without donating?",
+            answer: "Yes. Promotion, volunteering, and partner introductions are all useful ways to help."
+          }
+        ]
+      },
+      sections: [
+        {
+          type: "progress",
+          id: "campaign-progress",
+          title: "Current Campaigns",
+          intro: "Live goals and the current funding status for active drives.",
+          items: [
+            {
+              title: "School Kits for Students",
+              text: "Distribute notebooks, bags, and learning supplies to children in underserved neighborhoods.",
+              raised: 78000,
+              goal: 120000
+            },
+            {
+              title: "Community Health Support",
+              text: "Sponsor medicines, screening kits, and transport support for low-income patients.",
+              raised: 54000,
+              goal: 100000
+            },
+            {
+              title: "Climate Action Fund",
+              text: "Cover native tree planting, cleanup logistics, and sustainability awareness materials.",
+              raised: 26000,
+              goal: 75000
+            }
+          ]
+        },
+        {
+          type: "donate",
+          id: "campaign-donate",
+          title: "Support a Campaign",
+          intro: "A simple way to test donation flow and show preset amounts.",
+          text: "Choose a preset amount or enter a custom value to simulate support for active campaigns.",
+          presets: [500, 1000, 2500, 5000]
+        },
+        {
+          type: "list",
+          id: "campaign-use",
+          title: "How Contributions Are Used",
+          intro: "A transparent breakdown of the typical spend mix.",
+          items: [
+            "Direct beneficiary support and supplies.",
+            "Event logistics, transport, and venue coordination.",
+            "Partnership materials and awareness campaigns.",
+            "Follow-up visits and post-event reporting."
+          ]
+        }
+      ]
+    },
+    stories: {
+      title: "Stories",
+      intro: "Member journeys, partner feedback, and project highlights that show why the work matters.",
+      seo: {
+        slug: "stories.html",
+        keywords: ["Rotaract stories", "member stories", "community testimonials", "service journeys"]
+      },
+      sections: [
+        {
+          type: "quotes",
+          id: "stories-quotes",
+          title: "Member Stories",
+          intro: "Personal reflections from members and volunteers.",
+          items: [
+            {
+              text: "Rotaract gave me a place to learn leadership by doing real work for real people.",
+              name: "Anita Sharma",
+              role: "Club Member"
+            },
+            {
+              text: "I joined as a volunteer and quickly found projects where my skills could make an actual difference.",
+              name: "Shreya Nair",
+              role: "Project Lead"
+            },
+            {
+              text: "The club's structure makes it easy to contribute without losing sight of the outcome.",
+              name: "Rahul Singh",
+              role: "Volunteer"
+            }
+          ]
+        },
+        {
+          type: "timeline",
+          id: "stories-timeline",
+          title: "Story Highlights",
+          intro: "Recent moments that shaped member experience.",
+          items: [
+            {
+              date: "April 2026",
+              title: "New volunteer onboarding sprint",
+              meta: "Club HQ",
+              text: "Helped new members understand project roles, communication channels, and service expectations."
+            },
+            {
+              date: "March 2026",
+              title: "Mentorship night with alumni",
+              meta: "Community Hall",
+              text: "Members shared career lessons and first-hand advice with incoming volunteers."
+            },
+            {
+              date: "February 2026",
+              title: "Impact storytelling workshop",
+              meta: "Digital Session",
+              text: "Trained members to document projects clearly for partners, reports, and public updates."
+            }
+          ]
+        },
+        {
+          type: "faq",
+          id: "stories-faq",
+          title: "Common Questions",
+          intro: "A short FAQ that works well for SEO and user guidance.",
+          items: [
+            {
+              question: "How can I share a story from my project?",
+              answer: "Send the project name, date, and a short summary through the contact form so the team can review it."
+            },
+            {
+              question: "Do stories include partner perspectives?",
+              answer: "Yes. Partner quotes, volunteer reflections, and beneficiary feedback are all part of the story mix."
+            }
+          ]
+        }
+      ]
+    },
+    contact: {
+      title: "Contact",
+      intro: "Reach the club team for partnerships, volunteer opportunities, media, and general inquiries.",
+      seo: {
+        slug: "contact.html",
+        keywords: ["Rotaract contact", "club contact", "volunteer inquiry", "partnerships"]
+      },
+      sections: [
+        {
+          type: "contact",
+          id: "contact",
+          title: "Contact the Club",
+          details: [
+            { label: "Email", value: "hello@rotaractmetro.org" },
+            { label: "Phone", value: "+91 90000 12345" },
+            { label: "Location", value: "Metro City, Tamil Nadu" },
+            { label: "Hours", value: "Mon-Fri, 10:00 AM to 6:00 PM" }
+          ],
+          form: {
+            title: "Send a Message",
+            nameLabel: "Your Name",
+            emailLabel: "Email Address",
+            messageLabel: "Message",
+            submitLabel: "Submit Inquiry"
+          }
+        },
+        {
+          type: "newsletter",
+          id: "contact-newsletter",
+          title: "Stay in the Loop",
+          text: "Join the mailing list for the monthly brief, event calendar, and volunteer requests.",
+          submitLabel: "Subscribe"
         }
       ]
     }

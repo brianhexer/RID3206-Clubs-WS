@@ -741,6 +741,109 @@ img {
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.88), rgba(252, 247, 250, 0.96));
 }
 
+.footer-contact-section {
+  padding: 0 0 1.25rem;
+}
+
+.footer-contact-grid {
+  display: grid;
+  grid-template-columns: 0.95fr 1.05fr;
+  gap: 1.25rem;
+  align-items: start;
+}
+
+.footer-contact-copy {
+  background: linear-gradient(135deg, rgba(212, 19, 103, 0.08), rgba(242, 177, 52, 0.09));
+  border: 1px solid rgba(212, 19, 103, 0.1);
+  border-radius: var(--radius-lg);
+  padding: 1.4rem;
+  box-shadow: var(--shadow);
+}
+
+.footer-contact-copy h2 {
+  margin: 0.35rem 0 0.8rem;
+  font-size: clamp(1.5rem, 3vw, 2.2rem);
+}
+
+.footer-contact-text {
+  margin: 0;
+  color: var(--ink-soft);
+  line-height: 1.7;
+}
+
+.footer-contact-form {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  padding: 1.4rem;
+  display: grid;
+  gap: 0.65rem;
+}
+
+.footer-contact-form label,
+.reason-group legend {
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
+.footer-contact-form input,
+.footer-contact-form textarea {
+  width: 100%;
+  border: 1px solid #bdded4;
+  border-radius: 12px;
+  padding: 0.72rem 0.8rem;
+  font: inherit;
+  background: #fff;
+}
+
+.reason-group {
+  margin: 0.3rem 0 0.2rem;
+  padding: 0;
+  border: 0;
+}
+
+.reason-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.55rem;
+  margin-top: 0.55rem;
+}
+
+.reason-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  padding: 0.7rem 0.75rem;
+  border-radius: 12px;
+  border: 1px solid rgba(37, 22, 42, 0.1);
+  background: #fff;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.reason-option input {
+  width: auto;
+  margin: 0.15rem 0 0;
+  flex: none;
+}
+
+.footer-contact-submit {
+  justify-self: start;
+}
+
+.footer-contact-message {
+  margin: 0.1rem 0 0;
+}
+
+.footer-contact-message.success {
+  color: var(--primary-strong);
+}
+
+.footer-contact-message.error {
+  color: #9e1a1a;
+}
+
 .footer-grid {
   display: grid;
   grid-template-columns: 1.4fr 0.8fr 0.8fr;
@@ -831,11 +934,16 @@ img {
   .hero-grid,
   .two-col,
   .newsletter-card,
-  .footer-grid {
+  .footer-grid,
+  .footer-contact-grid {
     grid-template-columns: 1fr;
   }
 
   .newsletter-form {
+    grid-template-columns: 1fr;
+  }
+
+  .reason-options {
     grid-template-columns: 1fr;
   }
 
@@ -871,6 +979,10 @@ img {
   }
 
   .event-media-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .reason-options {
     grid-template-columns: 1fr;
   }
 

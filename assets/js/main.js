@@ -26,6 +26,51 @@
     return el;
   };
 
+  const getContinuousLoopWidth = (scroll) => Number(scroll?.dataset?.loopWidth || 0);
+
+  const wrapContinuousScroll = (scroll) => {
+    const loopWidth = getContinuousLoopWidth(scroll);
+    if (!loopWidth) {
+      return;
+    }
+
+    if (scroll.scrollLeft >= loopWidth) {
+      scroll.scrollLeft -= loopWidth;
+    } else if (scroll.scrollLeft < 0) {
+      scroll.scrollLeft += loopWidth;
+    }
+  };
+
+  const prepareContinuousScroll = (scroll) => {
+    if (!scroll || scroll.dataset.continuousPrepared === "true") {
+      return;
+    }
+
+    const children = Array.from(scroll.children);
+    if (children.length === 0) {
+      return;
+    }
+
+    scroll.dataset.continuousPrepared = "true";
+    children.forEach((child) => {
+      scroll.appendChild(child.cloneNode(true));
+    });
+    scroll.dataset.loopWidth = String(Math.max(1, Math.round(scroll.scrollWidth / 2)));
+  };
+
+  const resolveImageSource = (value) => {
+    const source = String(value || "");
+    if (!source) {
+      return "assets/img/social-preview.svg";
+    }
+
+    if (source.startsWith("assets/img/common/")) {
+      return "assets/img/social-preview.svg";
+    }
+
+    return source;
+  };
+
   const addScrollControls = (scroll, options = {}) => {
     const stepRatio = Number(options.stepRatio) || 0.8;
     const frame = create("div", "scroll-frame");
@@ -86,6 +131,7 @@
 
       const deltaX = event.clientX - dragState.startX;
       scroll.scrollLeft = dragState.startScrollLeft - deltaX;
+      wrapContinuousScroll(scroll);
     });
 
     scroll.addEventListener("pointerup", stopDrag);
@@ -114,13 +160,7 @@
         pauseAutoScroll();
         repeatTimer = window.setInterval(() => {
           scroll.scrollLeft += direction * Math.max(18, Math.round(scrollDistance() / 18));
-          if (scroll.scrollLeft <= 0) {
-            scroll.scrollLeft = 0;
-          }
-          const maxScroll = scroll.scrollWidth - scroll.clientWidth;
-          if (scroll.scrollLeft >= maxScroll) {
-            scroll.scrollLeft = maxScroll;
-          }
+          wrapContinuousScroll(scroll);
         }, 16);
       };
 
@@ -148,7 +188,8 @@
           return;
         }
 
-        scroll.scrollBy({ left: direction * scrollDistance(), behavior: "smooth" });
+        scroll.scrollLeft += direction * scrollDistance();
+        wrapContinuousScroll(scroll);
       });
     };
 
@@ -347,7 +388,7 @@
     if (section.backgroundImage) {
       const bgDiv = create("div", "about-bg");
       const img = create("img");
-      img.src = section.backgroundImage;
+      img.src = resolveImageSource(section.backgroundImage);
       img.alt = "About the club";
       img.loading = "lazy";
       bgDiv.appendChild(img);
@@ -403,7 +444,7 @@
         const item = create("a", "sponsor-item");
         item.href = sponsor.url || "#";
         const img = create("img");
-        img.src = sponsor.image;
+        img.src = resolveImageSource(sponsor.image);
         img.alt = sponsor.name;
         img.loading = "lazy";
         item.appendChild(img);
@@ -460,7 +501,7 @@
 
         if (project.image) {
           const img = create("img");
-          img.src = project.image;
+          img.src = resolveImageSource(project.image);
           img.alt = project.name;
           img.loading = "lazy";
           card.appendChild(img);
@@ -541,7 +582,7 @@
 
         const photo = create("div", "member-photo");
         const img = create("img");
-        img.src = member.image;
+        img.src = resolveImageSource(member.image);
         img.alt = member.name;
         img.loading = "lazy";
         photo.appendChild(img);
@@ -596,7 +637,7 @@
         if (testimonial.image) {
           const avatar = create("div", "testimonial-avatar");
           const img = create("img");
-          img.src = testimonial.image;
+          img.src = resolveImageSource(testimonial.image);
           img.alt = testimonial.name;
           img.loading = "lazy";
           avatar.appendChild(img);
@@ -643,6 +684,7 @@
     if (Array.isArray(section.gallery)) {
       section.gallery.forEach((item, idx) => {
         const card = create("article", "gallery-card");
+        card.dataset.galleryIndex = String(idx);
         card.style.cursor = "pointer";
 
         const imageDiv = create("div", "gallery-image");
@@ -662,7 +704,7 @@
         imageDiv.appendChild(overlay);
 
         const img = create("img");
-        img.src = item.image;
+        img.src = resolveImageSource(item.image);
         img.alt = item.name;
         img.loading = "lazy";
         imageDiv.appendChild(img);
@@ -677,13 +719,21 @@
 
         card.appendChild(info);
 
-        card.addEventListener("click", () => {
-          showGalleryModal(section.gallery, idx);
-        });
-
         scroll.appendChild(card);
       });
     }
+
+    scroll.addEventListener("click", (event) => {
+      const card = event.target.closest(".gallery-card");
+      if (!card || !scroll.contains(card)) {
+        return;
+      }
+
+      const index = Number(card.dataset.galleryIndex);
+      if (Number.isFinite(index)) {
+        showGalleryModal(section.gallery, index);
+      }
+    });
 
     container.appendChild(addScrollControls(scroll, {
       prevLabel: "Scroll gallery left",
@@ -751,7 +801,7 @@
     const updateModalImage = () => {
       const img = modal.querySelector(".modal-image");
       if (gallery[currentIndex]) {
-        img.src = gallery[currentIndex].image;
+        img.src = resolveImageSource(gallery[currentIndex].image);
         img.alt = gallery[currentIndex].name;
       }
     };
@@ -1130,7 +1180,8 @@
       } else if (sectionConfig.type === "gallery") {
         renderGallery(main, sectionConfig);
       } else if (sectionConfig.type === "cards") {
-        renderCards(sectionConfig);
+        const rendered = renderCards(sectionConfig);
+        if (rendered) main.appendChild(rendered);
       } else if (sectionConfig.type === "metrics") {
         const rendered = renderMetrics(sectionConfig);
         if (rendered) main.appendChild(rendered);
@@ -1203,6 +1254,155 @@
     footer.appendChild(copy);
   };
 
+  const renderFooterContact = (content) => {
+    const main = document.getElementById("pageMain");
+    if (!main || document.getElementById("footerContactSection")) {
+      return;
+    }
+
+    const section = create("section", "footer-contact-section section reveal");
+    section.id = "footerContactSection";
+
+    const container = create("div", "container footer-contact-grid");
+
+    const copy = create("div", "footer-contact-copy");
+    copy.appendChild(create("p", "kicker", "Get In Touch"));
+    copy.appendChild(create("h2", "", "Send a message before the footer"));
+    copy.appendChild(create("p", "footer-contact-text", "Use this form for membership interest, collaboration requests, event questions, or custom queries. We will route your message to the right team."));
+
+    const form = create("form", "footer-contact-form");
+    form.setAttribute("aria-label", "Footer contact form");
+
+    const nameLabel = create("label", "", "Name");
+    nameLabel.htmlFor = "footerContactName";
+    const nameInput = create("input");
+    nameInput.id = "footerContactName";
+    nameInput.name = "name";
+    nameInput.autocomplete = "name";
+    nameInput.required = true;
+
+    const phoneLabel = create("label", "", "Phone number");
+    phoneLabel.htmlFor = "footerContactPhone";
+    const phoneInput = create("input");
+    phoneInput.id = "footerContactPhone";
+    phoneInput.name = "phone";
+    phoneInput.type = "tel";
+    phoneInput.autocomplete = "tel";
+    phoneInput.required = true;
+
+    const emailLabel = create("label", "", "Mail id");
+    emailLabel.htmlFor = "footerContactEmail";
+    const emailInput = create("input");
+    emailInput.id = "footerContactEmail";
+    emailInput.name = "email";
+    emailInput.type = "email";
+    emailInput.autocomplete = "email";
+    emailInput.required = true;
+
+    const reasonGroup = create("fieldset", "reason-group");
+    const reasonLegend = create("legend", "", "Reason");
+    reasonGroup.appendChild(reasonLegend);
+
+    const reasonWrap = create("div", "reason-options");
+    [
+      "Interested to join the club",
+      "Collaboration Request",
+      "Event Participation",
+      "Sponsorship Opportunity",
+      "Media / Press Inquiry",
+      "Volunteer Support"
+    ].forEach((reason, index) => {
+      const option = create("label", "reason-option");
+      const checkbox = create("input");
+      checkbox.type = "checkbox";
+      checkbox.name = "reasons";
+      checkbox.value = reason;
+      checkbox.id = `footerReason${index}`;
+
+      option.appendChild(checkbox);
+      option.appendChild(create("span", "", reason));
+      reasonWrap.appendChild(option);
+    });
+    reasonGroup.appendChild(reasonWrap);
+
+    const customLabel = create("label", "", "Custom queries");
+    customLabel.htmlFor = "footerContactCustom";
+    const customInput = create("textarea");
+    customInput.id = "footerContactCustom";
+    customInput.name = "customQuery";
+    customInput.rows = 4;
+    customInput.placeholder = "Tell us more about your request";
+
+    const submit = create("button", "btn btn-solid footer-contact-submit", "Submit");
+    submit.type = "submit";
+
+    const status = create("p", "admin-message footer-contact-message");
+    status.setAttribute("aria-live", "polite");
+
+    form.appendChild(nameLabel);
+    form.appendChild(nameInput);
+    form.appendChild(phoneLabel);
+    form.appendChild(phoneInput);
+    form.appendChild(emailLabel);
+    form.appendChild(emailInput);
+    form.appendChild(reasonGroup);
+    form.appendChild(customLabel);
+    form.appendChild(customInput);
+    form.appendChild(submit);
+    form.appendChild(status);
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      status.textContent = "";
+      status.classList.remove("success", "error");
+
+      const selectedReasons = Array.from(form.querySelectorAll('input[name="reasons"]:checked')).map((input) => input.value);
+
+      const payload = {
+        name: String(nameInput.value || "").trim(),
+        phone: String(phoneInput.value || "").trim(),
+        email: String(emailInput.value || "").trim(),
+        reasons: selectedReasons,
+        customQuery: String(customInput.value || "").trim(),
+        sourcePage: pageKey
+      };
+
+      if (!payload.name || !payload.phone || !payload.email || selectedReasons.length === 0) {
+        status.textContent = "Please complete the required fields and choose at least one reason.";
+        status.classList.add("error");
+        return;
+      }
+
+      try {
+        const apiBase = resolveApiBase(content);
+        const response = await fetch(`${apiBase}/api/contact`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Accept: "application/json" },
+          credentials: "include",
+          body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+          const message = await response.json().catch(() => ({}));
+          throw new Error(message.message || "Unable to submit the form");
+        }
+
+        form.reset();
+        status.textContent = "Your message has been submitted successfully.";
+        status.classList.add("success");
+        showToast(content.messages.contactSuccess || "Thanks for reaching out.");
+      } catch (_error) {
+        status.textContent = "Submission failed. Please try again.";
+        status.classList.add("error");
+      }
+    });
+
+    container.appendChild(copy);
+    container.appendChild(form);
+    section.appendChild(container);
+    main.appendChild(section);
+  };
+
   const setupBackToTop = () => {
     const button = document.getElementById("backToTop");
     if (!button) {
@@ -1254,18 +1454,15 @@
         return;
       }
 
+      prepareContinuousScroll(container);
+
       let isScrolling = true;
       let scrollInterval = null;
 
-      // Start the auto-scroll
       scrollInterval = setInterval(() => {
         if (isScrolling) {
           container.scrollLeft += config.speed;
-
-          // Reset to beginning when reaching the end
-          if (container.scrollLeft >= container.scrollWidth - container.clientWidth - 10) {
-            container.scrollLeft = 0;
-          }
+          wrapContinuousScroll(container);
         }
       }, 50);
 
@@ -1280,24 +1477,20 @@
       container.addEventListener("scroll-autoplay-pause", stopAutoScroll);
       container.addEventListener("scroll-autoplay-resume", startAutoScroll);
 
-      // Pause on hover
       container.addEventListener("mouseenter", () => {
         stopAutoScroll();
       });
 
-      // Resume on mouse leave
       container.addEventListener("mouseleave", () => {
         startAutoScroll();
       });
 
-      // Pause on touch
       container.addEventListener("touchstart", () => {
         stopAutoScroll();
       });
 
-      // Resume after touch
       container.addEventListener("touchend", () => {
-        setTimeout(() => {
+        window.setTimeout(() => {
           startAutoScroll();
         }, 500);
       });
@@ -1527,6 +1720,7 @@
     applyPageMetadata(content, pageData);
     renderHeader(content);
     renderMain(content, pageData, eventMedia);
+    renderFooterContact(content);
     renderFooter(content);
     setupBackToTop();
     setupReveal();

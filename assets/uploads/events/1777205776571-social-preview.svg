@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
-  <title id="title">Rotaract Club of Metro City</title>
+  <title id="title">Rotaract Club of 3206</title>
   <desc id="desc">People of Action - Service, leadership, and measurable community impact.</desc>
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
@@ -12,7 +12,7 @@
   <circle cx="120" cy="560" r="220" fill="#ffffff" opacity="0.1"/>
   <g fill="#ffffff">
     <text x="80" y="250" font-family="Georgia, serif" font-size="72" font-weight="700">Rotaract Club</text>
-    <text x="80" y="330" font-family="Georgia, serif" font-size="72" font-weight="700">of Metro City</text>
+    <text x="80" y="330" font-family="Georgia, serif" font-size="72" font-weight="700">of 3206</text>
     <text x="80" y="410" font-family="Arial, sans-serif" font-size="34" opacity="0.95">People of Action</text>
     <text x="80" y="465" font-family="Arial, sans-serif" font-size="30" opacity="0.9">Service, leadership, and measurable community impact.</text>
   </g>

@@ -20,3 +20,4 @@ Gemfile.lock
 # Node.js runtime artifacts
 node_modules/
 .env
+.data/
