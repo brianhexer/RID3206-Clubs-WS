@@ -1458,6 +1458,113 @@
     elements.forEach((el) => observer.observe(el));
   };
 
+  const parseCounterMeta = (text) => {
+    const raw = String(text || "").trim();
+    const match = raw.match(/-?\d[\d,]*(?:\.\d+)?/);
+    if (!match) {
+      return null;
+    }
+
+    const numericText = match[0];
+    const numericValue = Number(numericText.replace(/,/g, ""));
+    if (!Number.isFinite(numericValue)) {
+      return null;
+    }
+
+    const decimalPart = numericText.split(".")[1] || "";
+    const decimals = decimalPart.length;
+    const startIndex = match.index || 0;
+    const prefix = raw.slice(0, startIndex);
+    const suffix = raw.slice(startIndex + numericText.length);
+
+    return {
+      value: numericValue,
+      decimals,
+      prefix,
+      suffix
+    };
+  };
+
+  const formatCounterValue = (value, meta) => {
+    const rounded = meta.decimals > 0 ? value.toFixed(meta.decimals) : String(Math.round(value));
+    const [integerPart, decimalPart] = rounded.split(".");
+    const sign = integerPart.startsWith("-") ? "-" : "";
+    const absInteger = sign ? integerPart.slice(1) : integerPart;
+    const groupedInteger = Number(absInteger || "0").toLocaleString("en-IN");
+    const numberText = decimalPart ? `${sign}${groupedInteger}.${decimalPart}` : `${sign}${groupedInteger}`;
+    return `${meta.prefix}${numberText}${meta.suffix}`;
+  };
+
+  const animateCounter = (element) => {
+    if (!element || element.dataset.counterAnimated === "true") {
+      return;
+    }
+
+    const meta = parseCounterMeta(element.textContent);
+    if (!meta) {
+      return;
+    }
+
+    element.dataset.counterAnimated = "true";
+
+    const prefersReducedMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (prefersReducedMotion) {
+      element.textContent = formatCounterValue(meta.value, meta);
+      return;
+    }
+
+    const duration = 1400;
+    const startValue = 0;
+    const delta = meta.value - startValue;
+    const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
+    let startTime = null;
+
+    const tick = (timestamp) => {
+      if (startTime === null) {
+        startTime = timestamp;
+      }
+
+      const progress = Math.min(1, (timestamp - startTime) / duration);
+      const currentValue = startValue + delta * easeOutCubic(progress);
+      element.textContent = formatCounterValue(currentValue, meta);
+
+      if (progress < 1) {
+        window.requestAnimationFrame(tick);
+      } else {
+        element.textContent = formatCounterValue(meta.value, meta);
+      }
+    };
+
+    window.requestAnimationFrame(tick);
+  };
+
+  const setupCountAnimations = () => {
+    const targets = Array.from(document.querySelectorAll(".about-highlights .value, .impact-card h3"));
+    if (targets.length === 0) {
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries, obs) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) {
+            return;
+          }
+
+          animateCounter(entry.target);
+          obs.unobserve(entry.target);
+        });
+      },
+      { threshold: 0.35 }
+    );
+
+    targets.forEach((element) => {
+      if (parseCounterMeta(element.textContent)) {
+        observer.observe(element);
+      }
+    });
+  };
+
   const setupAutoScroll = () => {
     const scrollConfigs = [
       { selector: ".sponsors-scroll", speed: 1 },
@@ -1742,6 +1849,7 @@
     renderFooter(content);
     setupBackToTop();
     setupReveal();
+    setupCountAnimations();
     setupAutoScroll();
   };
 
